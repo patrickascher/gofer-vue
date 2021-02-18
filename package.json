@@ -1,6 +1,6 @@
 {
   "name": "gofer-vue",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "dist/gofer-vue.ssr.js",
   "browser": "dist/gofer-vue.esm.js",
   "module": "dist/gofer-vue.esm.js",
