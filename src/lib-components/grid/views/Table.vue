@@ -44,29 +44,36 @@ export default {
   props: {api: String},
   data() {
     return {
-      showQuickFilter: false,
-      quickFilterValues: {},
-      lastQuickFilterValues: {},
-
       refreshHeader: [], // needed for reloading the headers
-      title: this.$router.currentRoute.name,
       vuetifyLoading: true,
       vuetifyError: false,
-      pagination: {},
-      dialogFilter: false,
-      filterButton: true,
-
       primaryKey: [],
       headers: [],
 
+
+      // Items from the backend.
       items: [],
       itemsTotal: 0,
-
-      itemsPerPage: [5, 10, 15, 25, 50, 100, 500],
-
-      conf: {
+      // vuetify pagination object
+      pagination: {},
+      // filter data
+      filter: {
+        values: {},
+        lastValues: {},
+      },
+      // backend config/default config will be generated
+      config: {
         id: null,
-        filter: [],
+        title: "",
+        description: null,
+        filter: {
+          disable: null,
+          disableQuickFilter: null,
+          disableCustomFilter: null,
+          openQuickFilter: null,
+          allowedRowsPerPage: [],
+          rowsPerPage: null,
+        },
         export: [],
         activeFilter: {id: null, group: null, rowsPerPage: 0, sortby: [], sortdesc: []},
         create: true,
@@ -92,11 +99,18 @@ export default {
       }
     },
   },
-  created() {
-    this.filterButton = _.get(this.$router.currentRoute.meta, "filterButton", true);
-  },
   computed: {
-    filterAllowed() {
+    filterQuickAllowed() {
+
+      console.log(this.config.filter)
+      if (this.config.filter.disable) {
+        return false
+      }
+
+      if (this.config.filter.disableQuickFilter) {
+        return false
+      }
+
       let filter = false;
       _.forEach(this.headers, function (value) {
         if (_.get(value, "filterable", false) !== false) {
@@ -105,19 +119,17 @@ export default {
       });
       return filter;
     },
-    quickFilter() {
-      // reset filter on hidden quickfilter
-      if (!this.showQuickFilter) {
-        this.quickFilterValues = {}
-        this.addQuickfilter();
+    filterCustomerAllowed() {
+      if (this.config.filter.disable) {
+        return false
       }
-      return (!this.showQuickFilter ? this.translations.Show : this.translations.Hide)
+      return this.config.filter.disableCustomFilter
     },
     initLoaded() {
       return this.headers.length !== 0
     },
     showAction() {
-      return (this.conf.update || this.conf.delete)
+      return (this.config.details || this.config.update || this.config.delete)
     },
 
     /**
@@ -185,7 +197,7 @@ export default {
       return false;
     },
     callExport(type) {
-      window.open(process.env.VUE_APP_API + "/" + this.backendUrl() + "/mode/export/type/" + type);
+      window.open(process.env.VUE_APP_API + "/" + this.backendUrl(true) + "/mode/export/type/" + type);
     },
     /**
      * backendUrl is returning the backend api url with sort,filter and header information.
@@ -196,7 +208,7 @@ export default {
       let head = "";
       // no header information if it got already loaded
       if (withHeader !== true && this.items.length !== 0) {
-        head = "/noheader/1";
+        head = "/onlyData/1";
       }
 
 
@@ -227,12 +239,12 @@ export default {
       }
 
       let filter = ""
-      if (this.conf.activeFilter.id != null) {
-        filter = "/filter/" + this.conf.activeFilter.id
+      if (this.config.activeFilter.id != null) {
+        filter = "/filter/" + this.config.activeFilter.id
       }
 
       let filterCust = ""
-      _.forEach(this.quickFilterValues, function (value, index) {
+      _.forEach(this.filter.values, function (value, index) {
         if (value !== null && value !== "") {
           filterCust += "/filter_" + index + "/" + value;
         }
@@ -253,12 +265,12 @@ export default {
       this.pagination.itemsPerPage = 10
       //}
 
-      this.getData(true)
+      this.getData()
     },
     addQuickfilter() {
-      if (!_.isEqual(this.quickFilterValues, this.lastQuickFilterValues)) {
-        this.getData(true)
-        this.lastQuickFilterValues = JSON.parse(JSON.stringify(this.quickFilterValues));
+      if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
+        this.getData() //no header- before with header, check why?
+        this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
       }
     },
     /**
@@ -274,20 +286,45 @@ export default {
       this.vuetifyLoading = true; // set vuetify loading indicator
       http.get(this.backendUrl(withHeader)).then((resp) => {
 
+
+        // only set data if config exists. (not dataOnly load)
+        if (_.get(resp.data, "config", null) !== null) {
+          // export
+          this.config.export = _.get(resp.data, "config.export", [])
+          if (this.config.export == null) {
+            this.config.export = []
+          }
+
+          // disable the "crud" link
+          this.config.id = _.get(resp.data, "config.id", null)
+          this.config.title = _.get(resp.data, "config.title", this.$router.currentRoute.name)
+          this.config.description = _.get(resp.data, "config.description", "")
+          this.config.create = !_.get(resp.data, "config.action.disableCreate", false)
+          this.config.detail = !_.get(resp.data, "config.action.disableDetail", false)
+          this.config.update = !_.get(resp.data, "config.action.disableUpdate", false)
+          this.config.delete = !_.get(resp.data, "config.action.disableDelete", false)
+
+          // filter
+          this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", false)
+          this.config.filter.allowedRowsPerPage = _.get(resp.data, "config.filter.allowedRowsPerPage", [5, 10, 15, 25, 50, 100, 500])
+          this.config.filter.openQuickFilter = _.get(resp.data, "config.filter.openQuickFilter", false)
+          this.config.filter.disable = _.get(resp.data, "config.filter.disable", false)
+          this.config.filter.disableCustomFilter = _.get(resp.data, "config.filter.disableCustomFilter", false)
+          this.config.filter.disableQuickFilter = _.get(resp.data, "config.filter.disableQuickFilter", false)
+        }
+
+
+        //TODO reform:
+
         // adding total items
         if (_.get(resp.data, "pagination.Total", false) !== false) {
           this.itemsTotal = resp.data.pagination.Total;
         }
 
-        // setting title
-        if (_.get(resp.data, "title", false) !== false) {
-          this.title = resp.data.title;
-        }
-
         if (_.get(resp.data, "config", false) !== false) {
           // user filters
           if (_.get(resp.data, "config.filter.list", false) !== false) {
-            this.conf.filter = resp.data.config.filter.list
+            this.config.filter = resp.data.config.filter.list
           }
           if (_.get(resp.data, "config.filter.active", false) !== false) {
 
@@ -300,8 +337,8 @@ export default {
               this.pagination.itemsPerPage = resp.data.config.filter.active.rowsPerPage
             }
 
-            if (this.conf.activeFilter.id !== resp.data.config.filter.active.id) {
-              this.conf.activeFilter.id = resp.data.config.filter.active.id
+            if (this.config.activeFilter.id !== resp.data.config.filter.active.id) {
+              this.config.activeFilter.id = resp.data.config.filter.active.id
             }
 
             if (_.get(resp.data, "config.filter.active.sort", false) !== false) {
@@ -317,33 +354,6 @@ export default {
               this.pagination.sortDesc = sortDesc
             }
           }
-
-          // disable the "detail" link
-          if (_.get(resp.data, "config.id", false) !== false) {
-            this.conf.id = resp.data.config.id
-          }
-
-          // disable the "detail" link
-          if (_.get(resp.data, "export", false) !== false) {
-            this.conf.export = resp.data.export
-          }
-          // disable the "detail" link
-          if (_.get(resp.data, "config.action.disableDetail", false) !== false) {
-            this.conf.detail = !resp.data.config.action.disableDetail
-          }
-          // disable the "create" link
-          if (_.get(resp.data, "config.action.disableCreate", false) !== false) {
-            this.conf.create = !resp.data.config.action.disableCreate
-          }
-          // disable the "update" link
-          if (_.get(resp.data, "config.action.disableUpdate", false) !== false) {
-            this.conf.update = !resp.data.config.action.disableUpdate
-          }
-          // disable the "delete" link
-          if (_.get(resp.data, "config.action.disableDelete", false) !== false) {
-            this.conf.delete = !resp.data.config.action.disableDelete
-          }
-
         }
 
         if (_.get(resp.data, "head", false) !== false) {
@@ -365,8 +375,8 @@ export default {
 
 
             if (("filterable" in this.headers[i])) {
-              if (typeof this.quickFilterValues[this.headers[i].name] === "undefined") {
-                this.quickFilterValues[this.headers[i].name] = ""
+              if (typeof this.filter.values[this.headers[i].name] === "undefined") {
+                this.filter.values[this.headers[i].name] = ""
               }
             }
 
@@ -379,10 +389,10 @@ export default {
 
           // needed that the binding is working because the props were added manually.
           // TODO better solution
-          this.quickFilterValues = JSON.parse(JSON.stringify(this.quickFilterValues));
+          this.filter.values = JSON.parse(JSON.stringify(this.filter.values));
 
           // adding action icons
-          if (_.get(resp.data, "config.action.l", false) !== false) {
+          if (_.get(resp.data, "config.action.positionLeft", false) !== false) {
             this.headers.unshift({text: "Action", align: "end", sortable: false, value: "grid_action"})
           } else {
             this.headers.push({text: "Action", width: 1, sortable: false, value: "grid_action"})
@@ -480,25 +490,6 @@ export default {
     editItem(item) {
       this.$router.push(this.$route.path + "/mode/update" + this.urlWithPrimaryParam(item));
     },
-    updatefilterlist(value) {
-      this.conf.filter = (value === null) ? [] : value;
-      this.$store.commit('navigation/' + NAVIGATION.RELOAD)
-
-      let reload = false;
-      let exists = false;
-      let _this = this;
-      _.forEach(value, function (entry) {
-        if (entry.id === _this.conf.activeFilter.id) {
-          reload = true;
-          exists = true;
-        }
-      });
-
-      if (typeof this.conf.activeFilter.id !== "undefined" && (reload || !exists)) {
-        this.applyFilter()
-      }
-
-    }
   }
 }
 
@@ -517,7 +508,7 @@ export default {
             class="mt-4"
             type="text"
         ></v-skeleton-loader>
-        <h1 v-if="initLoaded">{{ title }}</h1>
+        <h1 v-if="initLoaded">{{ config.title }}</h1>
 
         <v-progress-linear
             v-if="!initLoaded"
@@ -525,8 +516,8 @@ export default {
             color="grey"
             style="border-radius:5px;height:6px;width:50px;"
         ></v-progress-linear>
-
-        <hr v-if="initLoaded&&title!=''" color="error" style="border-radius:5px;height:6px;width:50px;"/>
+        <hr v-if="initLoaded&&config.title!=''" color="error" style="border-radius:5px;height:6px;width:50px;"/>
+        <p v-if="initLoaded">{{ config.description }}</p>
       </v-col>
     </v-row>
     <v-row>
@@ -539,7 +530,7 @@ export default {
         ></v-skeleton-loader>
 
         <v-btn
-            v-if="conf.create&&(!vuetifyLoading||initLoaded)"
+            v-if="config.create&&(!vuetifyLoading||initLoaded)"
             color="primary"
             small
             class="mr-2"
@@ -559,31 +550,31 @@ export default {
         ></v-skeleton-loader>
 
         <v-btn
-            v-if="initLoaded&&filterAllowed"
+            v-if="initLoaded&&filterQuickAllowed"
             small
-            :outlined="!showQuickFilter"
+            :outlined="!config.filter.openQuickFilter"
             color="primary"
             class="mr-2"
-            @click="showQuickFilter=!showQuickFilter">
+            @click="config.filter.openQuickFilter=!config.filter.openQuickFilter">
           <v-icon small>mdi-filter</v-icon>
         </v-btn>
 
-        <v-menu v-if="initLoaded&&conf.export.length>0" offset-y>
+        <v-menu v-if="initLoaded&&config.export.length>0" offset-y>
           <template v-slot:activator="{ on }">
             <v-btn small
                    color="primary"
                    outlined
-                   class="mr-2"
+                   class="mr-2" export.length
                    v-on="on"
             >
               {{ $t('GRID.Export') }}
             </v-btn>
           </template>
           <v-list>
-            <v-list-item dense @click="callExport(e.Key)" :key="e.Key" v-for="e in conf.export">
+            <v-list-item dense @click="callExport(e.key)" :key="e.key" v-for="e in config.export">
               <v-list-item-title>
-                <v-icon dense>{{ e.Icon }}</v-icon>
-                {{ e.Name }}
+                <v-icon dense>{{ e.icon }}</v-icon>
+                {{ e.name }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -600,7 +591,7 @@ export default {
 
     <!-- data grid -->
     <v-data-table
-        :footer-props="{'showFirstLastPage':true,'items-per-page-options': itemsPerPage,'items-per-page-text':$t('GRID.RowsPerPage'),'page-text':'{0}-{1} '+$t('GRID.XofY')+' {2}'}"
+        :footer-props="{'showFirstLastPage':true,'items-per-page-options': config.filter.allowedRowsPerPage,'items-per-page-text':$t('GRID.RowsPerPage'),'page-text':'{0}-{1} '+$t('GRID.XofY')+' {2}'}"
 
         :no-data-text="$t('GRID.NoData')"
         :loading-text="$t('GRID.LoadingData')"
@@ -616,11 +607,11 @@ export default {
         multi-sort
     >
 
-      <template v-if="showQuickFilter" v-slot:body.prepend="{ headers }">
+      <template v-if="!config.filter.disable&&!config.filter.disableQuickFilter&&config.filter.openQuickFilter" v-slot:body.prepend="{ headers }">
         <tr>
           <td class="px-2" v-for="header in headers">
             <v-text-field @change="addQuickfilter" v-if="header.filterable" single-line dense
-                          v-model="quickFilterValues[header.name]"></v-text-field>
+                          v-model="filter.values[header.name]"></v-text-field>
           </td>
         </tr>
       </template>
@@ -643,7 +634,7 @@ export default {
             </div>
             <div class="grid_action" v-if="header.value === 'grid_action' && showAction">
               <v-icon
-                  v-if="conf.update"
+                  v-if="config.update"
                   small
                   class="mr-2"
                   @click="editItem(item)"
@@ -651,7 +642,7 @@ export default {
                 mdi-pencil
               </v-icon>
               <v-icon
-                  v-if="conf.delete"
+                  v-if="config.delete"
                   @click="deleteItem(item)"
                   small
               >

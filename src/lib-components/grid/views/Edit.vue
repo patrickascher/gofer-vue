@@ -173,6 +173,8 @@ export default {
           this.item = resp.data.data;
         }
 
+
+
         //manipulations for relations and null
         this.head.forEach((head) => {
 
@@ -332,7 +334,6 @@ export const FieldComponent = function (field) {
         {{ $t('GRID.Back') }}
       </v-btn>
 
-      {{item}}
       <!-- Save Button -->
       <v-tooltip right>
         <template v-slot:activator="{ on }">
