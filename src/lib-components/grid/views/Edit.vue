@@ -53,8 +53,8 @@ export default {
       itemNotFound: false,
       loading: false,
       itemChanged: false,
-      title: "",
 
+      config: {},
       head: [],
       snapshotItem: {},
       item: {},
@@ -87,6 +87,7 @@ export default {
         if (_.get(head, "remove", false)) {
           return false
         }
+        head.title = this.$t(head.tmpTitle)
         return typeof head.hide === 'undefined';
       })
     },
@@ -166,6 +167,7 @@ export default {
       http.get(this.api).then((resp) => {
 
         this.head = resp.data.head;
+        this.config = resp.data.config;
 
         if (this.mode() === MODE_CREATE) {
           this.item = this.buildItemFromHeader(this.head);
@@ -177,6 +179,8 @@ export default {
 
         //manipulations for relations and null
         this.head.forEach((head) => {
+
+          head.tmpTitle = head.title // needed for the translation to reg. changes.
 
           if (head.primary === true) {
             if (this.item == null || this.item[head.name] === 0) {
@@ -223,7 +227,6 @@ export default {
      */
     save() {
       this.loading = true;
-      console.log("-->", this.item)
       http.request({
         url: this.api,
         method: this.mode() === MODE_CREATE ? "post" : "put",
@@ -291,7 +294,7 @@ export const FieldComponent = function (field) {
           class="mt-4"
           type="text"
       ></v-skeleton-loader>
-      <h1>{{ title }}</h1>
+      <h1>{{ $t(config.title) }}</h1>
       <hr color="gray" class="mb-10" style="border-radius:5px;height:6px;width:50px;"/>
       <v-skeleton-loader v-for="i in [1,2,3,4,5,6]"
                          class="mt-4"
@@ -307,7 +310,7 @@ export const FieldComponent = function (field) {
     </div>
 
     <div v-else>
-      <h1>{{ api }}</h1>
+      <h1>{{ $t(config.title) }}</h1>
 
       <!-- Form Data -->
       <v-form ref="form" v-if="!itemNotFound" v-model="valid">
@@ -331,7 +334,7 @@ export const FieldComponent = function (field) {
           color="primary"
           @click="backToGrid()"
       >
-        {{ $t('GRID.Back') }}
+        {{ $t('COMMON.Back') }}
       </v-btn>
 
       <!-- Save Button -->
@@ -344,12 +347,12 @@ export const FieldComponent = function (field) {
                 @click="validate()"
                 :disabled="!changed || loading || !valid"
             >
-              {{ $t('GRID.Save') }}
+              {{ $t('COMMON.Save') }}
             </v-btn>
           </div>
         </template>
-        <span v-if="!changed">{{ $t('GRID.NoChanges') }}</span>
-        <span v-if="!valid">{{ $t('GRID.NotValid') }}</span>
+        <span v-if="!changed">{{ $t('COMMON.NoChanges') }}</span>
+        <span v-if="!valid">{{ $t('COMMON.NotValid') }}</span>
       </v-tooltip>
     </div>
   </div>

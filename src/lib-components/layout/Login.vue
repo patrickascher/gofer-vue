@@ -39,6 +39,7 @@ export default {
   created() {
     this.config.imgBg = process.env.VUE_APP_BACKGROUND;
     this.config.imgLogo = process.env.VUE_APP_LOGO;
+    this.config.title = process.env.VUE_APP_TITLE;
 
     if (userService.getUser() !== null) {
       this.$router.push(userService.redirectAfterLoginPath());
@@ -48,15 +49,15 @@ export default {
     passwordErrors() {
       const errors = []
       if (!this.$v.form.password.$dirty) return errors;
-      !this.$v.form.password.minLength && errors.push(this.$t('COMMON.ErrPasswordLength'))
-      !this.$v.form.password.required && errors.push(this.$t('COMMON.ErrPasswordRequired'))
+      !this.$v.form.password.minLength && errors.push(this.$t('CONTROLLER.auth.Controller.Login.ErrPasswordLength'))
+      !this.$v.form.password.required && errors.push(this.$t('CONTROLLER.auth.Controller.Login.ErrPasswordRequired'))
       return errors
     }
     ,
     emailErrors() {
       const errors = []
       if (!this.$v.form.username.$dirty) return errors;
-      !this.$v.form.username.required && errors.push(this.$t('COMMON.ErrLoginRequired'))
+      !this.$v.form.username.required && errors.push(this.$t('CONTROLLER.auth.Controller.Login.ErrLoginRequired'))
       return errors
     },
   },
@@ -114,8 +115,8 @@ export default {
                        class="ma-0 pa-1 mt-3" style="width:100%" color="primary">
                   {{ $t('COMMON.Login') }}
                 </v-btn>
-                <div class="pt-4 grey--text" v-html="$t('COMMON.Privacy')"></div>
-                <div style="position:absolute;bottom:0" v-html="$t('COMMON.Impress')">
+                <div class="pt-4 grey--text" v-html="$t('CONTROLLER.auth.Controller.Login.Privacy')"></div>
+                <div style="position:absolute;bottom:0" v-html="$t('CONTROLLER.auth.Controller.Login.Impress')">
                 </div>
               </v-form>
             </v-flex>
@@ -132,7 +133,7 @@ export default {
               <div style="width:400px;line-height: 1.0 !important;"
                    class="mb-4 font-weight-bold display-3 white--text">
                 <h1 class="mb-2" style="font-size: 90px;color:#ffffff;line-height: 70px;font-weight: 900;">
-                  {{ $t('APPLICATION.Name') }}</h1>
+                  {{ config.title }}</h1>
                 <hr color="error"
                     style="border-radius:5px;height:6px;margin-bottom: 50px;width:80px;"></hr>
               </div>

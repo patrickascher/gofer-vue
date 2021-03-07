@@ -98,7 +98,7 @@ export default {
         <v-list-item-subtitle v-if="node.Note">
           <v-chip x-small>{{ node.Note }}</v-chip>
         </v-list-item-subtitle>
-        <v-list-item-title @mouseover="mouseEnter()" v-on="on">{{ node.Title }}</v-list-item-title>
+        <v-list-item-title @mouseover="mouseEnter()" v-on="on">{{ $t("NAVIGATION."+node.Title)  }}</v-list-item-title>
       </template>
       <span> {{ $t("NAVIGATION."+node.Title)  }}</span>
     </v-tooltip>

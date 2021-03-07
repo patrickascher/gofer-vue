@@ -1,6 +1,6 @@
 <script>
 import {store} from '@/lib-components/store'
-import {ALERT, NAVIGATION} from '@/lib-components/store/modules/types'
+import {ALERT} from '@/lib-components/store/modules/types'
 import {
   VBtn,
   VCol,
@@ -146,6 +146,7 @@ export default {
         if (_.get(head, "remove", false)) {
           return false
         }
+        head.text = this.$t(head.title)
         return typeof head.hide === 'undefined';
       })
     },
@@ -470,7 +471,7 @@ export default {
      * TODO: create a template?
      */
     deleteItem(item) {
-      if (confirm(this.$t('GRID.DeleteItem'))) {
+      if (confirm(this.$t('COMMON.DeleteItem'))) {
         http.delete(this.api + this.urlWithPrimaryParam(item)).then(() => {
           //delete item
           const index = this.items.indexOf(item);
@@ -508,7 +509,7 @@ export default {
             class="mt-4"
             type="text"
         ></v-skeleton-loader>
-        <h1 v-if="initLoaded">{{ config.title }}</h1>
+        <h1 v-if="initLoaded">{{ $t(config.title) }}</h1>
 
         <v-progress-linear
             v-if="!initLoaded"
@@ -517,7 +518,7 @@ export default {
             style="border-radius:5px;height:6px;width:50px;"
         ></v-progress-linear>
         <hr v-if="initLoaded&&config.title!=''" color="error" style="border-radius:5px;height:6px;width:50px;"/>
-        <p v-if="initLoaded">{{ config.description }}</p>
+        <p v-if="initLoaded">{{ $t(config.description) }}</p>
       </v-col>
     </v-row>
     <v-row>
@@ -536,7 +537,7 @@ export default {
             class="mr-2"
             :to="$route.path + '/mode/create'"
         >
-          {{ $t('GRID.Add') }}
+          {{ $t('COMMON.Add') }}
         </v-btn>
       </v-col>
       <v-spacer cols="1"></v-spacer>
@@ -567,7 +568,7 @@ export default {
                    class="mr-2" export.length
                    v-on="on"
             >
-              {{ $t('GRID.Export') }}
+              {{ $t('COMMON.Export') }}
             </v-btn>
           </template>
           <v-list>
@@ -607,7 +608,8 @@ export default {
         multi-sort
     >
 
-      <template v-if="!config.filter.disable&&!config.filter.disableQuickFilter&&config.filter.openQuickFilter" v-slot:body.prepend="{ headers }">
+      <template v-if="!config.filter.disable&&!config.filter.disableQuickFilter&&config.filter.openQuickFilter"
+                v-slot:body.prepend="{ headers }">
         <tr>
           <td class="px-2" v-for="header in headers">
             <v-text-field @change="addQuickfilter" v-if="header.filterable" single-line dense
