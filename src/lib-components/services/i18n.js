@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueI18n from "vue-i18n";
 import {http} from './http'
 
+
 Vue.use(VueI18n);
 
 // loaded languages in app life-time.
@@ -11,6 +12,8 @@ const loadedLanguages = []
 export const i18n = new VueI18n({
     locale: 'en', // set locale
     fallbackLocale: 'en',
+    silentFallbackWarn: true,
+    silentTranslationWarn: false
 })
 
 // i18nService

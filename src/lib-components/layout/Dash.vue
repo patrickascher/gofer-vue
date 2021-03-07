@@ -1,12 +1,29 @@
 <script>
-import {VAppBar,VAppBarNavIcon,VIcon,VToolbarTitle,VSpacer,VMenu,VList,VListItem,VListItemAvatar,VBtn,VContainer,VMain,VLayout,VListItemContent,VListItemTitle,VListItemSubtitle,VDivider} from 'vuetify/lib'
+import {
+  VAppBar,
+  VAppBarNavIcon,
+  VBtn,
+  VContainer,
+  VDivider,
+  VIcon,
+  VLayout,
+  VList,
+  VListItem,
+  VListItemAvatar,
+  VListItemContent,
+  VListItemSubtitle,
+  VListItemTitle,
+  VMain,
+  VMenu,
+  VSpacer,
+  VToolbarTitle
+} from 'vuetify/lib'
 import _ from 'lodash'
 import {userService} from '../services/user'
 import {ALERT, USER} from '../store/modules/types'
 import {store} from '../store'
-
+import {i18nService} from '../services/i18n'
 import Navigation from '@/lib-components/layout/dash/Navigation'
-
 
 export default {
   data() {
@@ -15,10 +32,15 @@ export default {
       logo: process.env.VUE_APP_DASH_LOGO,
       navMini: false,
       userMenu: false,
+      languages: {},
     }
   },
   created() {
     this.user = store.getters['user/' + USER.GET_DATA]
+    store.watch(state => state.languages.availableLangs, () => {
+      this.languages = store.state.languages.availableLangs
+    });
+
     if (_.has(this.user, ['State']) && this.user.State === "PWCHANGE") {
       // TODO show PW CHANGE FORM
     }
@@ -31,9 +53,30 @@ export default {
       return "";
     }
   },
-  components: {Navigation,
-    VAppBar,VAppBarNavIcon,VIcon,VToolbarTitle,VSpacer,VMenu,VList,VListItem,VListItemAvatar,VBtn,VContainer,VMain,VLayout,VListItemContent,VListItemTitle,VListItemSubtitle,VDivider},
+  components: {
+    Navigation,
+    VAppBar,
+    VAppBarNavIcon,
+    VIcon,
+    VToolbarTitle,
+    VSpacer,
+    VMenu,
+    VList,
+    VListItem,
+    VListItemAvatar,
+    VBtn,
+    VContainer,
+    VMain,
+    VLayout,
+    VListItemContent,
+    VListItemTitle,
+    VListItemSubtitle,
+    VDivider
+  },
   methods: {
+    changeLang(lang) {
+      i18nService.loadLanguageAsync(lang, false)
+    },
     updateMenu(variable) {
       this.userMenu = variable
     },
@@ -69,6 +112,36 @@ export default {
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+
+
+      <v-menu
+          :close-on-click="true"
+          :close-on-content-click="true"
+          :offset-y="true"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              dark
+              icon
+              v-bind="attrs"
+              v-on="on"
+          >
+            <v-icon>mdi-translate</v-icon>
+            <v-icon x-small style="width:12px;margin-top:10px;">mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list dense>
+          <v-list-item
+              @click="changeLang(item.BCP)"
+              v-for="item in languages"
+              :key="item.ID"
+          >
+            <v-list-item-title>{{ item.SelfName }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
       <v-menu
           v-if="user!==null&&user.Name!==''"
           v-model="userMenu"

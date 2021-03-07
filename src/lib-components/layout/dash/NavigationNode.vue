@@ -78,7 +78,7 @@ export default {
 
     <template v-slot:activator>
       <v-list-item-title>
-        {{ node.Title }}
+        {{ $t("NAVIGATION."+node.Title) }}
       </v-list-item-title>
     </template>
 
@@ -100,7 +100,7 @@ export default {
         </v-list-item-subtitle>
         <v-list-item-title @mouseover="mouseEnter()" v-on="on">{{ node.Title }}</v-list-item-title>
       </template>
-      <span> {{ node.Title }}</span>
+      <span> {{ $t("NAVIGATION."+node.Title)  }}</span>
     </v-tooltip>
 
     <v-list-item-icon v-if="node.Icon&&depth>=1">

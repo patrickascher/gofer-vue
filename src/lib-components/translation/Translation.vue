@@ -28,7 +28,7 @@ import {
 import {http} from '../services/http'
 import {i18nService} from '../services/i18n'
 import {store} from "../store";
-import {ALERT} from "../store/modules/types";
+import {ALERT, LANGUAGES} from "../store/modules/types";
 import {isEqual} from "lodash";
 
 export default {
@@ -135,8 +135,11 @@ export default {
         // additional separator.
         if (s.length > 2 && (groupName === "" || groupName !== s[1])) {
           groupName = s[1] + _this.separator
-          if (s.length === 4) { // controller
+          if (s.length === 4) { // orm
             groupName = s[1] + _this.separator + s[2] + _this.separator
+          }
+          if (s.length === 5) { // controller
+            groupName = s[1] + _this.separator + s[2] + _this.separator + s[3] + _this.separator
           }
           let exists = false
           _.forEach(group, function (value) {
@@ -181,6 +184,7 @@ export default {
       http.get(this.$route.meta.api + "/mode/overview").then((resp) => {
         // set data
         this.translated = resp.data.translated;
+        store.commit("languages/" + LANGUAGES.SET_LANGUAGES, resp.data.translated);
         this.languages = resp.data.languages;
         this.rawMessages = resp.data.rawMessages;
         this.groups = resp.data.groups;
@@ -225,6 +229,7 @@ export default {
         store.commit('alert/' + ALERT.SUCCESS, "Translation " + lang.toUpperCase() + " - " + this.groups[group].toUpperCase() + " saved!");
         this.loading = false;
         this.translated = resp.data.translated;
+        store.commit("languages/" + LANGUAGES.SET_LANGUAGES, resp.data.translated);
         this.generateItems(resp.data.translation);
 
         // reload lang file if the actual locale got changed.
@@ -350,7 +355,7 @@ export default {
             class="mt-4"
             type="text"
         ></v-skeleton-loader>
-        <h1 v-if="initLoaded">{{ $t('CONTROLLER.locale.Controller.Title') }}</h1>
+        <h1 v-if="initLoaded">{{ $t('CONTROLLER.locale.Controller.Translation.Title') }}</h1>
         <v-progress-linear
             v-if="!initLoaded"
             indeterminate
@@ -358,7 +363,7 @@ export default {
             style="border-radius:5px;height:6px;width:50px;"
         ></v-progress-linear>
         <hr v-if="initLoaded" color="error" style="border-radius:5px;height:6px;width:50px;"/>
-        <p v-if="initLoaded">{{ $t('CONTROLLER.locale.Controller.Description') }}</p>
+        <p v-if="initLoaded">{{ $t('CONTROLLER.locale.Controller.Translation.Description') }}</p>
 
       </v-col>
     </v-row>
@@ -381,12 +386,12 @@ export default {
                 small
                 class="mb-3"
             >
-              {{ $t('CONTROLLER.locale.Controller.AddLanguage') }}
+              {{ $t('CONTROLLER.locale.Controller.Translation.AddLanguage') }}
             </v-btn>
           </template>
           <v-card>
             <v-card-title>
-              <span class="headline">{{ $t('CONTROLLER.locale.Controller.AddLanguage') }}</span>
+              <span class="headline">{{ $t('CONTROLLER.locale.Controller.Translation.AddLanguage') }}</span>
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -465,8 +470,8 @@ export default {
               <template v-slot:default>
                 <thead>
                 <tr>
-                  <th class="text-left">{{ $t('CONTROLLER.locale.Controller.ID') }}</th>
-                  <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation') }}</th>
+                  <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation.ID') }}</th>
+                  <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation.Translation') }}</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -5,6 +5,12 @@ export const ALERT = {
     CLEAR: "ALERT_CLEAR",
 };
 
+export const LANGUAGES = {
+    SET_LANGUAGES: "SET_LANGUAGES",
+    GET_LANGUAGES: "GET_LANGUAGES",
+    SET_LOCALE: "SET_LOCALE",
+};
+
 export const USER = {
     SET_DATE: 'USER_SET_DATA',
     UNSET_DATA: 'UNSET_USER_DATA',
