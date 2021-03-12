@@ -2,7 +2,7 @@
 import {VCard, VList, VListItem, VListItemTitle, VNavigationDrawer, VSkeletonLoader} from 'vuetify/lib'
 import NavNode from "@/lib-components/layout/dash/NavigationNode"
 import {userService} from "@/lib-components/services/user"
-import {LANGUAGES, NAVIGATION} from "@/lib-components/store/modules/types";
+import {ALERT, LANGUAGES, NAVIGATION} from "@/lib-components/store/modules/types";
 import {store} from "@/lib-components/store";
 
 export default {
@@ -37,6 +37,8 @@ export default {
         store.commit("languages/" + LANGUAGES.SET_LANGUAGES, resp.data.languages);
       }
       this.loading = false;
+    }).catch((error) => {
+        store.commit('alert/' + ALERT.ERROR, error);
     });
 
     store.watch(state => state.navigation.reload, () => {
@@ -46,6 +48,8 @@ export default {
             this.items = resp.data.navigation;
           }
           this.loading = false;
+        }).catch((error) => {
+          store.commit('alert/' + ALERT.ERROR, error);
         });
         store.commit('navigation/' + NAVIGATION.CLEAR)
       }

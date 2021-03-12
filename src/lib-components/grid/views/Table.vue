@@ -154,7 +154,7 @@ export default {
   },
 
   methods: {
-    getValue(item, decorator) {
+    getValue(item, decorator,separator) {
       if (!Array.isArray(item)) {
         item = [item]
       }
@@ -184,7 +184,7 @@ export default {
         rv.push(decor)
       });
 
-      return rv.join("")
+      return rv.join(separator)
     },
     hasOwnView(header) {
       return _.get(header, 'view', false) !== false;
@@ -408,14 +408,17 @@ export default {
               let head = this.headers[i]
               let _this = this;
               // add no escaping
-              if (_this.headers[i].options.decorator[1] === true) {
+              let separator = "";
+
+              if (_.get(_this.headers[i], "options.decorator.1", false) !== false) {
                 _this.headers[i].options['noEscaping'] = [true]
+                separator= _this.headers[i].options.decorator[1]
               }
               _.forEach(resp.data.data, function (value, index) {
                 if (resp.data.data[index][head.name] === null) {
                   return;
                 }
-                resp.data.data[index][head.name] = _this.getValue(resp.data.data[index][head.name], _this.headers[i].options.decorator[0])
+                resp.data.data[index][head.name] = _this.getValue(resp.data.data[index][head.name], _this.headers[i].options.decorator[0],separator)
               });
             }
 

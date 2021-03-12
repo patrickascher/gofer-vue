@@ -54,7 +54,7 @@ export default {
       loading: false,
       itemChanged: false,
 
-      config: {},
+      config: {title:""},
       head: [],
       snapshotItem: {},
       item: {},
@@ -166,16 +166,21 @@ export default {
 
       http.get(this.api).then((resp) => {
 
+        // if no head was loaded by backend
+        if (typeof resp.data.head=="undefined"){
+          // TODO show some error message?
+          return
+        }
+
         this.head = resp.data.head;
         this.config = resp.data.config;
+
 
         if (this.mode() === MODE_CREATE) {
           this.item = this.buildItemFromHeader(this.head);
         } else {
           this.item = resp.data.data;
         }
-
-
 
         //manipulations for relations and null
         this.head.forEach((head) => {

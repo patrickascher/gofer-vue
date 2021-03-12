@@ -29,7 +29,7 @@ export default {
     form: {
       password: {
         required,
-        minLength: minLength(7)
+        minLength: minLength(6)
       },
       username: {
         required
