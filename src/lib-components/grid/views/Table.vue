@@ -77,6 +77,7 @@ export default {
         export: [],
         activeFilter: {id: null, group: null, rowsPerPage: 0, sortby: [], sortdesc: []},
         create: true,
+        createLinks: null,
         detail: true,
         update: true,
         delete: true
@@ -101,8 +102,6 @@ export default {
   },
   computed: {
     filterQuickAllowed() {
-
-      console.log(this.config.filter)
       if (this.config.filter.disable) {
         return false
       }
@@ -154,7 +153,7 @@ export default {
   },
 
   methods: {
-    getValue(item, decorator,separator) {
+    getValue(item, decorator, separator) {
       if (!Array.isArray(item)) {
         item = [item]
       }
@@ -198,7 +197,7 @@ export default {
       return false;
     },
     callExport(type) {
-      window.open(process.env.VUE_APP_API + "/" + this.backendUrl(true) + "/mode/export/type/" + type);
+      window.open(Config.get('webserver.domain') + "/" + this.backendUrl(true) + "/mode/export/type/" + type);
     },
     /**
      * backendUrl is returning the backend api url with sort,filter and header information.
@@ -300,6 +299,8 @@ export default {
           this.config.id = _.get(resp.data, "config.id", null)
           this.config.title = _.get(resp.data, "config.title", this.$router.currentRoute.name)
           this.config.description = _.get(resp.data, "config.description", "")
+          this.config.createLinks = _.get(resp.data, "config.action.createLinks", null)
+
           this.config.create = !_.get(resp.data, "config.action.disableCreate", false)
           this.config.detail = !_.get(resp.data, "config.action.disableDetail", false)
           this.config.update = !_.get(resp.data, "config.action.disableUpdate", false)
@@ -402,9 +403,16 @@ export default {
         }
 
         if (this.headers.length > 0) {
+
           for (let i = 0; i < this.headers.length; i++) {
+
+
+
             // callback decorator
-            if (_.get(this.headers[i], "options.decorator", false) !== false) {
+            if (_.get(this.headers[i], "options.decorator", false) !== false &&
+                _.get(this.headers[i], "options.select.0.ReturnID", false) === false //why? - was true by default before
+            ) {
+
               let head = this.headers[i]
               let _this = this;
               // add no escaping
@@ -412,25 +420,25 @@ export default {
 
               if (_.get(_this.headers[i], "options.decorator.1", false) !== false) {
                 _this.headers[i].options['noEscaping'] = [true]
-                separator= _this.headers[i].options.decorator[1]
+                separator = _this.headers[i].options.decorator[1]
               }
               _.forEach(resp.data.data, function (value, index) {
                 if (resp.data.data[index][head.name] === null) {
                   return;
                 }
-                resp.data.data[index][head.name] = _this.getValue(resp.data.data[index][head.name], _this.headers[i].options.decorator[0],separator)
+                resp.data.data[index][head.name] = _this.getValue(resp.data.data[index][head.name], _this.headers[i].options.decorator[0], separator)
               });
             }
 
             // select value with items
-            if (_.get(this.headers[i], "options.select.Items", false) !== false) {
+            if (_.get(this.headers[i], "options.select.0.Items", false) !== false) {
               let head = this.headers[i]
               let _this = this;
               _.forEach(resp.data.data, function (value, index) {
                 if (resp.data.data[index][head.name] === null) {
                   return;
                 }
-                _.forEach(_this.headers[i].options.select.Items, function (v) {
+                _.forEach(_this.headers[i].options.select[0].Items, function (v) {
                   if (v.value === resp.data.data[index][head.name]) {
                     resp.data.data[index][head.name] = v.text
                   }
@@ -445,8 +453,6 @@ export default {
 
         // set the items
         this.items = (resp.data.data == null) ? [] : resp.data.data;
-
-
       }).catch((error) => {
         this.vuetifyLoading = false; // reset vuetify loading indicator
         this.vuetifyError = true; // set error indicator
@@ -485,7 +491,10 @@ export default {
 
           //refresh
           this.getData()
-        });
+        }).catch((error) => {
+              store.commit('alert/' + ALERT.ERROR, error);
+            }
+        );
       }
     },
     /**
@@ -534,7 +543,7 @@ export default {
         ></v-skeleton-loader>
 
         <v-btn
-            v-if="config.create&&(!vuetifyLoading||initLoaded)"
+            v-if="config.create&&config.createLinks==null&&(!vuetifyLoading||initLoaded)"
             color="primary"
             small
             class="mr-2"
@@ -542,6 +551,31 @@ export default {
         >
           {{ $t('COMMON.Add') }}
         </v-btn>
+
+        <v-menu offset-y v-if="config.createLinks!=null">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+                color="primary"
+                small
+                class="mr-2"
+                v-bind="attrs"
+                v-on="on"
+            >
+              {{ $t('COMMON.Add') }}
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+                :to="$route.path + '/mode/create/'+item"
+                v-for="(item, index) in config.createLinks"
+                :key="index"
+            >
+              <v-list-item-title>{{ index }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+
       </v-col>
       <v-spacer cols="1"></v-spacer>
       <v-col cols="9" align="end">
@@ -625,9 +659,8 @@ export default {
       <template v-slot:item="{ item }">
         <tr style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
-
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :is="header.view"></component>
+              <component v-model="item[header.name]" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]"

@@ -20,7 +20,7 @@ export default {
 <template>
   <v-textarea
       :disabled="isReadOnly()"
-      :label="getLabel()"
+      :label="getLabel"
       :hint="field.description"
       :counter="counter"
       :auto-grow="true"

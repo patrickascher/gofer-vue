@@ -24,12 +24,14 @@ import {ALERT, USER} from '../store/modules/types'
 import {store} from '../store'
 import {i18nService} from '../services/i18n'
 import Navigation from '@/lib-components/layout/dash/Navigation'
+import Config from '../services/config'
+
 
 export default {
   data() {
     return {
-      title: process.env.VUE_APP_TITLE,
-      logo: process.env.VUE_APP_DASH_LOGO,
+      title: Config.get('webserver.app.name'),
+      logo: Config.get('webserver.app.logoSmall'),
       navMini: false,
       userMenu: false,
       languages: {},

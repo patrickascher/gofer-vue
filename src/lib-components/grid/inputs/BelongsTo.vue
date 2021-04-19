@@ -77,7 +77,7 @@ export default {
       }
     },
     isAutocomplete() {
-      return _.get(this.field, "options.autocomplete", false)
+      return _.get(this.field, "options.autocomplete.0", false)
     },
     isCombobox() {
       return _.get(this.field, "options.combobox", false)
@@ -86,7 +86,7 @@ export default {
       return _.get(this.field, "options.select.0.ReturnID", false) === false;
     },
     noDataTxt() {
-      return _.get(this.field, 'options.no-data', 'Please enter the search value')
+      return _.get(this.field, 'options.no-data.0', 'Please enter the search value')
     }
   },
   methods: {
@@ -100,10 +100,11 @@ export default {
       }, 500)
     },
     getTextFields(item) {
-      let arr = _.split(this.field.options.select[0].TextField, ",")
+      let arr = _.split(_.get(this.field.options.select[0],"TextField","text"), ",")
       let rv = []
 
       _.forEach(arr, function (value) {
+        value=value.trim()
         if (value in item) {
           rv.push(item[value])
         } else {
@@ -121,7 +122,6 @@ export default {
       // user defined his own items.
       if (_.get(this.field, "options.select.0.Items", false) !== false) {
         this.selectVal = this.field.options.select[0].Items;
-        console.log("aaaaa",this.selectVal);
         return
       }
 
@@ -167,7 +167,7 @@ export default {
       }
 
       // request data
-      http.get(_.get(this.field, "options.select.api", this.api.replace("mode/update/", "mode/callback/").replace("mode/create", "mode/callback")) + "/callback/select/f/" + field + autocomplete + allParam).then((resp) => {
+      http.get(_.get(this.field, "options.select.0.api", this.api.replace("mode/update/", "mode/callback/").replace("mode/create", "mode/callback")) + "/callback/select/f/" + field + autocomplete + allParam).then((resp) => {
         if (resp.data.data !== null) {
           this.selectVal = resp.data.data;
         } else {
@@ -194,7 +194,7 @@ export default {
       v-if="isCombobox"
       :disabled="isReadOnly()"
       v-show="!isHidden()"
-      :label="getLabel()"
+      :label="getLabel"
       :hint="field.description"
       :items="selectVal"
       :no-data-text="noDataTxt"
@@ -231,14 +231,14 @@ export default {
       v-else-if="isAutocomplete"
       :disabled="isReadOnly()"
       v-show="!isHidden()"
-      :label="getLabel()"
+      :label="getLabel"
       :hint="field.description"
       :items="selectVal"
       :no-data-text="noDataTxt"
 
       :search-input.sync="search"
 
-      :item-value="field.options.select.ValueField"
+      :item-value="field.options.select[0].ValueField"
       :item-text="getTextFields"
       :loading="selectLoading"
 
@@ -254,7 +254,7 @@ export default {
       :clearable="!isRequired()"
       :disabled="isReadOnly()"
       v-show="!isHidden()"
-      :label="getLabel()"
+      :label="getLabel"
       :items="selectVal"
       :hint="field.description"
 

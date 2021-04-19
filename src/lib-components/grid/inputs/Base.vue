@@ -23,7 +23,7 @@ export default {
    * field - {obj} includes the field information from the backend
    * value - is the v-model of the component
    */
-  props: ["field", "value", "translations","outlined","dense","filled","hint","rows","rowHeight"],
+  props: ["field", "value", "translations", "outlined", "dense", "filled", "hint", "rows", "rowHeight"],
   data() {
     return {
       FieldType: FieldType
@@ -76,14 +76,13 @@ export default {
      * @returns {function(*=): string}
      */
     getLabel: function () {
-      return (additional) => {
-        if (typeof additional !== "undefined") {
-          additional = " " + additional;
-        } else {
-          additional = "";
-        }
-        return this.required === true ? this.field.title + additional + ' *' : this.field.title + additional;
-      };
+      return this.required === true ? this.$t(this.field.title) + ' *' : this.$t(this.field.title);
+    },
+    getLabelDate: function () {
+      return this.required === true ? this.$t(this.field.title) + " " + this.$t("COMMON.Time") + ' *' : this.$t(this.field.title) + " " + this.$t("COMMON.Time");
+    },
+    getLabelTime: function () {
+      return this.required === true ? this.$t(this.field.title) + " " + this.$t("COMMON.Date") + ' *' : this.$t(this.field.title) + " " + this.$t("COMMON.Date");
     },
     /**
      * fieldValue is used to set value correct to the given v-model of the parent call

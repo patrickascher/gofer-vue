@@ -17,7 +17,7 @@ export default {
 <template>
   <v-switch
       :disabled="isReadOnly()"
-      :label="getLabel()"
+      :label="getLabel"
       :hint="field.description"
       v-model.lazy="fieldValue"
       v-show="!isHidden()"

@@ -7,7 +7,6 @@ const state = {
 
 const getters = {
     [SELECT.GET_DATA]: (state, field) => {
-        console.log("getter",state,field)
         return state.cache[field]
     },
     [SELECT.GET_LOADING]: (state, field) => {

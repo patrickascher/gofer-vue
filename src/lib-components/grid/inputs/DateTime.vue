@@ -1,11 +1,11 @@
 <script>
-import {VLayout, VFlex, VMenu, VTextField, VDatePicker, VTooltip} from 'vuetify/lib'
+import {VDatePicker, VFlex, VLayout, VMenu, VTextField, VTooltip} from 'vuetify/lib'
 import InputBase from '@/lib-components/grid/inputs/Base'
 import {validation} from '@/lib-components/grid/mixins/validation'
 import {mask} from 'vue-the-mask'
 
 export default {
-  components:{VLayout, VFlex, VMenu, VTextField, VDatePicker, VTooltip},
+  components: {VLayout, VFlex, VMenu, VTextField, VDatePicker, VTooltip},
   directives: {mask},
   extends: InputBase,
   mixins: [validation],
@@ -67,7 +67,7 @@ export default {
           <v-text-field
               :disabled="isReadOnly()"
               v-model="datepickerValue"
-              :label="getLabel('Date')"
+              :label="getLabelDate"
               prepend-icon="mdi-calendar"
               readonly
               :rules="rules"
@@ -85,7 +85,7 @@ export default {
         <div style="display:inline" v-on="isType(FieldType.DateTime)&&datepickerValue==null?on:null">
           <v-text-field v-if="isType(FieldType.Time) ||isType(FieldType.DateTime)"
                         v-model="timepickerValue"
-                        :label="getLabel('Time')"
+                        :label="getLabelTime"
                         prepend-icon="mdi-clock-outline"
                         return-masked-value
                         :disabled="isReadOnly()||isType(FieldType.DateTime)&&datepickerValue==null"

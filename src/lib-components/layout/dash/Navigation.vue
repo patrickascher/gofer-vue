@@ -9,8 +9,8 @@ export default {
   data() {
     return {
       loading: true,
-      hrefPrivacy:process.env.VUE_APP_PRIVACY_HREF,
-      hrefImpress:process.env.VUE_APP_IMPRESS_HREF,
+      hrefPrivacy:this.$t('NAVIGATION.PrivacyHref'),
+      hrefImpress:this.$t('NAVIGATION.ImpressHref'),
       items: Object,
       drawer: true,
     }
@@ -79,11 +79,11 @@ export default {
       ></v-skeleton-loader>
       <template v-slot:append>
 
-        <v-list-item v-if="!navMini" dense target="_blank" :href="hrefPrivacy">
+        <v-list-item v-if="!navMini&&hrefPrivacy!==' '" dense target="_blank" :href="hrefPrivacy">
           <v-list-item-title>Privacy poilicy<br/>
           </v-list-item-title>
         </v-list-item>
-        <v-list-item v-if="!navMini" dense target="_blank" :href="hrefImpress">
+        <v-list-item v-if="!navMini&&hrefImpress!==' '" dense target="_blank" :href="hrefImpress">
           <v-list-item-title>Impressum</v-list-item-title>
         </v-list-item>
 

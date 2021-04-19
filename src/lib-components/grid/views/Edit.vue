@@ -1,6 +1,6 @@
 <script>
 
-import {VAlert, VBtn, VForm, VSkeletonLoader, VTooltip} from 'vuetify/lib'
+import {VAlert, VBtn, VCol, VDialog, VForm, VIcon, VRow, VSkeletonLoader, VSpacer, VTooltip} from 'vuetify/lib'
 import {http} from '@/lib-components/services/http'
 
 import InputIntegerText from '@/lib-components/grid/inputs/IntegerText'
@@ -15,11 +15,12 @@ import InputFile from '@/lib-components/grid/inputs/File'
 
 
 import {FieldType} from '@/lib-components/grid/inputs/Base'
-import {MODE_CREATE, MODE_TABLE, MODE_UPDATE} from '@/lib-components/grid/Grid'
+import {FieldComponent,MODE_CREATE, MODE_TABLE, MODE_UPDATE} from '@/lib-components/grid/common'
 import {isEqual} from 'lodash';
 import {store} from '@/lib-components/store'
 import {ALERT, SELECT} from '@/lib-components/store/modules/types'
 import {viewOptions} from '@/lib-components/grid/mixins/helper'
+import History from "@/lib-components/grid/views/EditHistory"
 
 export default {
   /**
@@ -31,6 +32,8 @@ export default {
    *  components loads all the default input components.
    */
   components: {
+    History,
+    VDialog,
     InputIntegerText,
     InputTextArea,
     InputDateTime,
@@ -43,6 +46,8 @@ export default {
     VForm,
     VAlert,
     VBtn,
+    VIcon,
+    VRow, VCol, VSpacer,
     VTooltip,
     VSkeletonLoader
   },
@@ -54,7 +59,9 @@ export default {
       loading: false,
       itemChanged: false,
 
-      config: {title:""},
+      showHistory: false,
+
+      config: {title: ""},
       head: [],
       snapshotItem: {},
       item: {},
@@ -71,6 +78,22 @@ export default {
     store.commit("selectValues/" + SELECT.UNSET_DATA);
   },
   computed: {
+    mode: function () {
+      if (typeof this.currentRoute.params === "undefined" || typeof this.currentRoute.params.pathMatch === "undefined") {
+        return MODE_TABLE
+      }
+
+      if (this.currentRoute.params.pathMatch.includes("mode/create")) {
+        return MODE_CREATE
+      }
+
+      if (this.currentRoute.params.pathMatch.includes("mode/update/")) {
+        return MODE_UPDATE
+      }
+
+      // fallback
+      return MODE_TABLE
+    },
     changed: function () {
       this.itemChanged = !isEqual(this.item, this.snapshotItem)
       return this.itemChanged
@@ -93,23 +116,10 @@ export default {
     },
   },
   methods: {
-    mode: function () {
-      if (typeof this.currentRoute.params.pathMatch === "undefined") {
-        return MODE_TABLE
-      }
-
-      if (this.currentRoute.params.pathMatch.includes("mode/create")) {
-        return MODE_CREATE
-      }
-
-      if (this.currentRoute.params.pathMatch.includes("mode/update/")) {
-        return MODE_UPDATE
-      }
-
-      // fallback
-      return MODE_TABLE
+    historyAllowed() {
+      return !_.get(this.config, 'history.disable', false)
     },
-    checkchanges() {
+    checkChanges() {
       this.itemChanged = !isEqual(this.item, this.snapshotItem)
     },
     viewOptions: viewOptions,
@@ -167,7 +177,7 @@ export default {
       http.get(this.api).then((resp) => {
 
         // if no head was loaded by backend
-        if (typeof resp.data.head=="undefined"){
+        if (typeof resp.data.head == "undefined") {
           // TODO show some error message?
           return
         }
@@ -176,7 +186,7 @@ export default {
         this.config = resp.data.config;
 
 
-        if (this.mode() === MODE_CREATE) {
+        if (this.mode === MODE_CREATE) {
           this.item = this.buildItemFromHeader(this.head);
         } else {
           this.item = resp.data.data;
@@ -234,7 +244,7 @@ export default {
       this.loading = true;
       http.request({
         url: this.api,
-        method: this.mode() === MODE_CREATE ? "post" : "put",
+        method: this.mode === MODE_CREATE ? "post" : "put",
         data: this.item
       }).then((resp) => {
         this.loading = false;
@@ -247,47 +257,6 @@ export default {
     }
   },
 }
-
-/**
- * @return {string}
- */
-export const FieldComponent = function (field) {
-
-  if (typeof field.view !== "undefined") {
-    return field.view;
-  }
-
-  switch (field.type) {
-    case FieldType.File:
-      return "input-file"
-    case FieldType.Text:
-    case FieldType.Password:
-    case FieldType.Integer:
-    case FieldType.Float:
-      return "input-integer-text";
-    case FieldType.TextArea:
-      return "input-text-area";
-    case FieldType.Time:
-    case FieldType.Date:
-    case FieldType.DateTime:
-      return "input-date-time";
-    case FieldType.BelongsTo:
-    case FieldType.Select:
-      return "input-belongs-to";
-    case FieldType.ManyToManySR:
-    case FieldType.ManyToMany:
-      return "input-many-to-many";
-    case FieldType.HasOne:
-      return "input-has-one";
-    case FieldType.HasMany:
-      return "input-has-many";
-    case FieldType.Bool:
-      return "input-bool"
-    default:
-      console.error("The component \"" + field.type + "\" is not implemented (" + field.name + ")");
-      return "";
-  }
-};
 </script>
 
 <template>
@@ -315,12 +284,33 @@ export const FieldComponent = function (field) {
     </div>
 
     <div v-else>
-      <h1>{{ $t(config.title) }}</h1>
+
+      <v-row>
+        <v-col cols="2">
+          <h1>{{ $t(config.title) }}</h1>
+        </v-col>
+        <v-spacer cols="auto"></v-spacer>
+        <v-col cols="2" class="d-flex justify-end">
+          <v-dialog v-if="historyAllowed()&&mode === 'update'"
+                    v-model="showHistory"
+                    persistent
+                    fullscreen
+                    hide-overlay
+                    transition="dialog-bottom-transition">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-on="on" small color="primary">
+                <v-icon small>mdi-history</v-icon>
+              </v-btn>
+            </template>
+            <history :api="api" :config="config" v-model="showHistory"></history>
+          </v-dialog>
+        </v-col>
+      </v-row>
 
       <!-- Form Data -->
       <v-form ref="form" v-if="!itemNotFound" v-model="valid">
         <div v-for="(field) in headersNotHidden" :key="field.position+field.name">
-          <component @changes="checkchanges" :api="api" :snapshot="snapshotItem" :options="viewOptions(field)"
+          <component @changes="checkChanges" :api="api" :snapshot="snapshotItem" :options="viewOptions(field)"
                      v-model="item[field.name]"
                      :field="field"
                      :is="getFieldComponent(field)"></component>

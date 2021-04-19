@@ -10,7 +10,7 @@ import InputBool from '@/lib-components/grid/inputs/Bool'
 import InputBase from '@/lib-components/grid/inputs/Base'
 import {validation} from '@/lib-components/grid/mixins/validation'
 import {viewOptions} from '@/lib-components/grid/mixins/helper'
-import {FieldComponent} from '@/lib-components/grid/views/Edit'
+import {FieldComponent} from '@/lib-components/grid/common'
 
 
 export default {

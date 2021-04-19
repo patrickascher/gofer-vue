@@ -4,11 +4,6 @@ import * as components from '@/lib-components/index';
 // install function executed by Vue.use()
 const install = function installGoferVue(Vue) {
     Object.entries(components).forEach(([componentName, component]) => {
-        //console.log(componentName,component,options)
-
-       // component.props["newa"]={ default: options.test }
-
-
         Vue.component(componentName, component);
     });
 

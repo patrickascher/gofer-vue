@@ -1,10 +1,5 @@
 <script>
-// grid declarations
-export const MODE_TABLE = "table";
-export const MODE_UPDATE = "update";
-export const MODE_CREATE = "create";
-// router to get the current route
-//import {router} from '../../router'
+import {MODE_CREATE, MODE_TABLE, MODE_UPDATE} from '@/lib-components/grid/common'
 // views
 import GridTableView from '@/lib-components/grid/views/Table'
 import GridEditView from '@/lib-components/grid/views/Edit'

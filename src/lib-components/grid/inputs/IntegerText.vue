@@ -44,7 +44,7 @@ export default {
   <v-text-field
       autocomplete="off"
       :disabled="isReadOnly()"
-      :label="getLabel()"
+      :label="getLabel"
       :hint="field.description"
       :required="required"
       :counter="counter"

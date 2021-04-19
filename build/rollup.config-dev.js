@@ -65,8 +65,13 @@ const external = [
   'vuelidate',
   'vuex',
   'vuelidate/lib/validators',
-  'vuetify/lib'
+  'vuetify/lib',
+  'lodash',
+  'vue-i18n',
+  'axios',
+  'vue-the-mask'
 ];
+
 
 // UMD/IIFE shared settings: output.globals
 // Refer to https://rollupjs.org/guide/en#output-globals for details
@@ -74,6 +79,9 @@ const globals = {
   // Provide global variable names to replace your external imports
   // eg. jquery: '$'
   vue: 'Vue',
+  axios:'axios',
+  lodash:'_',
+  "vue-i18n":'$t',
 };
 
 // Customize configs for individual targets
@@ -84,7 +92,7 @@ if (!argv.format || argv.format === 'es') {
     input: 'src/entry.esm.js',
     external,
     output: {
-      file: '/Users/x/goProjects/src/github.com/patrickascher/gofer-skeleton/frontend/node_modules/gofer-vue/dist/gofer-vue.esm.js',
+      file: '/Users/x/goProjects/src/github.com/patrickascher/fedex/frontend/node_modules/gofer-vue/dist/gofer-vue.esm.js',
       format: 'esm',
       exports: 'named',
     },
@@ -116,7 +124,7 @@ if (!argv.format || argv.format === 'cjs') {
     external,
     output: {
       compact: true,
-      file: '/Users/x/goProjects/src/github.com/patrickascher/gofer-skeleton/frontend/node_modules/gofer-vue/dist/gofer-vue.ssr.js',
+      file: '/Users/x/goProjects/src/github.com/patrickascher/fedex/frontend/node_modules/gofer-vue/dist/gofer-vue.ssr.js',
       format: 'cjs',
       name: 'GoferVue',
       exports: 'auto',
@@ -146,7 +154,7 @@ if (!argv.format || argv.format === 'iife') {
     external,
     output: {
       compact: true,
-      file: '/Users/x/goProjects/src/github.com/patrickascher/gofer-skeleton/frontend/node_modules/gofer-vue/dist/gofer-vue.min.js',
+      file: '/Users/x/goProjects/src/github.com/patrickascher/fedex/frontend/node_modules/gofer-vue/dist/gofer-vue.min.js',
       format: 'iife',
       name: 'GoferVue',
       exports: 'auto',

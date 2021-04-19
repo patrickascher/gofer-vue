@@ -7,7 +7,8 @@ import {
   VListItemIcon,
   VListItemSubtitle,
   VListItemTitle,
-  VTooltip
+  VTooltip,
+    VAvatar
 } from 'vuetify/lib'
 
 export default {
@@ -22,7 +23,7 @@ export default {
     depth: Number
   },
   components: {
-    VListGroup, VListItem, VListItemTitle, VIcon, VTooltip, VListItemSubtitle, VChip, VListItemIcon
+    VListGroup, VListItem, VListItemTitle, VIcon, VTooltip, VListItemSubtitle, VChip, VListItemIcon,VAvatar
   },
   methods: {
     mouseEnter: function () {
@@ -34,33 +35,29 @@ export default {
   computed: {
 
     isActive() {
-      let checkRecursive = () => {
-
-        if (this.node.Route.Pattern === this.$route.path) {
-          //this.groupActive = true; //TODO needed?
+      let checkRecursive = (node) => {
+        if (node.Route.Pattern === this.$route.path) {
           return true;
         }
 
-        if (this.node.Children && this.node.Children.length) {
-          for (let i = 0; i < this.node.Children.length; i++) {
-            let child = this.node.Children[i];
+        if (node.Children && node.Children.length) {
+          for (let i = 0; i < node.Children.length; i++) {
+            let child = node.Children[i];
 
             if (child.Route.Pattern !== "" && this.$route.path.startsWith(child.Route.Pattern)) {
               return true;
             }
+
             if (child.Children && child.Children.length) {
               if (checkRecursive(child)) {
                 return true
               }
             }
           }
-
         }
-
         return false
       };
-
-      return checkRecursive();
+      return checkRecursive(this.node);
     }
   }
 }
@@ -77,6 +74,7 @@ export default {
   >
 
     <template v-slot:activator>
+      <v-list-item @click.native.stop v-if="node.Route.Pattern" :to="node.Route.Pattern" class="item-link"></v-list-item>
       <v-list-item-title>
         {{ $t("NAVIGATION."+node.Title) }}
       </v-list-item-title>
@@ -111,4 +109,11 @@ export default {
 </template>
 
 <style>
+.item-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
 </style>
