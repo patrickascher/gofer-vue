@@ -92,7 +92,7 @@ if (!argv.format || argv.format === 'es') {
     input: 'src/entry.esm.js',
     external,
     output: {
-      file: '/Users/x/goProjects/src/github.com/patrickascher/fedex/frontend/node_modules/gofer-vue/dist/gofer-vue.esm.js',
+      file: '/Users/x/goProjects/src/github.com/patrickascher/fedex-schenker/frontend/node_modules/gofer-vue/dist/gofer-vue.esm.js',
       format: 'esm',
       exports: 'named',
     },

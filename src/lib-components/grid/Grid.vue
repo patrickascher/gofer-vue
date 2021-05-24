@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     getComponent() {
-      if (_.get(this.currentRoute, "meta.grid.view", false) !== false && (this.mode() === MODE_CREATE || this.mode() === MODE_UPDATE)) {
+      if (_.get(this.currentRoute, "meta.grid.view", false) !== false) {
         return this.currentRoute.meta.grid.view
       }
       if (this.mode() === MODE_TABLE) {

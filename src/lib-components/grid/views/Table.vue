@@ -18,6 +18,7 @@ import {
   VTextField
 } from 'vuetify/lib'
 import {http} from '@/lib-components/services/http'
+import {Config} from "@/lib-components";
 
 
 export default {
@@ -663,8 +664,7 @@ export default {
               <component v-model="item[header.name]" :api="api" :is="header.view"></component>
             </div>
 
-            <div v-else-if="noEscaping(header)" v-html="item[header.name]"
-                 v-else>
+            <div v-else-if="noEscaping(header)" v-html="item[header.name]">
             </div>
 
             <div v-else>

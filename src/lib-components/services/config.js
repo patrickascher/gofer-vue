@@ -8,6 +8,7 @@ export default class config {
         goferConfig = cfg
         i18nService.loadLanguageAsync(_.get(cfg, "webserver.translation.defaultLanguage", "en"), false)
         http.defaults.baseURL = this.get("webserver.domain")
+
     }
 
     static get(config = null) {

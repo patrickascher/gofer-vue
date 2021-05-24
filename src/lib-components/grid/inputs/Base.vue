@@ -1,5 +1,5 @@
 <script>
-export let FieldType = {
+export const FieldType = {
   Integer: "Integer",
   File: "File",
   Text: "Text",
@@ -77,12 +77,6 @@ export default {
      */
     getLabel: function () {
       return this.required === true ? this.$t(this.field.title) + ' *' : this.$t(this.field.title);
-    },
-    getLabelDate: function () {
-      return this.required === true ? this.$t(this.field.title) + " " + this.$t("COMMON.Time") + ' *' : this.$t(this.field.title) + " " + this.$t("COMMON.Time");
-    },
-    getLabelTime: function () {
-      return this.required === true ? this.$t(this.field.title) + " " + this.$t("COMMON.Date") + ' *' : this.$t(this.field.title) + " " + this.$t("COMMON.Date");
     },
     /**
      * fieldValue is used to set value correct to the given v-model of the parent call

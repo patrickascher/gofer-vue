@@ -67,7 +67,7 @@ export default {
           <v-text-field
               :disabled="isReadOnly()"
               v-model="datepickerValue"
-              :label="getLabelDate"
+              :label="getLabel"
               prepend-icon="mdi-calendar"
               readonly
               :rules="rules"
@@ -85,7 +85,7 @@ export default {
         <div style="display:inline" v-on="isType(FieldType.DateTime)&&datepickerValue==null?on:null">
           <v-text-field v-if="isType(FieldType.Time) ||isType(FieldType.DateTime)"
                         v-model="timepickerValue"
-                        :label="getLabelTime"
+                        :label="getLabel"
                         prepend-icon="mdi-clock-outline"
                         return-masked-value
                         :disabled="isReadOnly()||isType(FieldType.DateTime)&&datepickerValue==null"

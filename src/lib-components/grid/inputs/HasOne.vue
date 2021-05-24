@@ -103,6 +103,8 @@ export default {
       } else {
         this.fieldValue[field] = value;
       }
+
+      console.log(this.fieldValue);
     },
   }
 }
@@ -115,11 +117,12 @@ export default {
       <v-toolbar-title>{{ field.title }} {{ field.description }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="isType(FieldType.HasMany)&&!addDisbaled&&(!this.maxFour||(this.maxFour&&fieldValue.length<4))" icon
+      <v-btn v-if="!isReadOnly&&isType(FieldType.HasMany)&&!addDisbaled&&(!this.maxFour||(this.maxFour&&fieldValue.length<4))" icon
              @click="addTableEntry(field.fields)">
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-toolbar>
+
     <v-data-table
         v-if="(isType(FieldType.HasMany) && fieldValue!=null) || isType(FieldType.HasOne)"
         :items="Array.isArray(fieldValue)?fieldValue:[fieldValue]"
@@ -158,13 +161,20 @@ export default {
           </td>
 
           <!-- READ ONLY -->
-          <td v-if="isReadOnly()" v-show="!isHidden()" v-for="(head) in field.fields"
-              :key="head.name">
-            {{
-              Array.isArray(fieldValue) ? fieldValue[item.index][head.name] : fieldValue != null ? fieldValue[head.name] : null
-            }}
+          <td v-if="isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields" :key="head.name">
+            <component v-if="head.view" :api="api"
+                       :field="head"
+                       :parent="field"
+                       :parentData="fieldValue"
+                       :index="index"
+                       :is="getFieldComponent(head)"
+                       :options="viewOptions(head)"
+                       v-bind:value="Array.isArray(fieldValue)?fieldValue[index][head.name]:fieldValue!=null?fieldValue[head.name]:null">
+            </component>
+            <div v-else>
+              {{Array.isArray(fieldValue) ? fieldValue[index][head.name] : fieldValue != null ? fieldValue[head.name] : null }}
+            </div>
           </td>
-
 
         </tr>
       </template>
