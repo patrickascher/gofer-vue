@@ -117,7 +117,7 @@ export default {
       <v-toolbar-title>{{ field.title }} {{ field.description }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="!isReadOnly&&isType(FieldType.HasMany)&&!addDisbaled&&(!this.maxFour||(this.maxFour&&fieldValue.length<4))" icon
+      <v-btn v-if="!isReadOnly()&&isType(FieldType.HasMany)&&!addDisbaled&&(!this.maxFour||(this.maxFour&&fieldValue.length<4))" icon
              @click="addTableEntry(field.fields)">
         <v-icon>mdi-plus</v-icon>
       </v-btn>
