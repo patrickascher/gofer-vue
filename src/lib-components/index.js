@@ -1,16 +1,15 @@
-/* eslint-disable import/prefer-default-export */
-import {http} from "@/lib-components/services/http";
-import {FieldType} from "@/lib-components/grid/inputs/Base";
-
 export {default as LoginLayout} from './layout/Login.vue';
 export {default as DashLayout} from './layout/Dash.vue';
 export {default as GridLayout} from './layout/Grid.vue';
 
 // views
+export {default as GridTableView} from './grid/views/Table.vue'
+export {default as GridEditView} from './grid/views/Edit.vue'
 export {default as TranslationView} from './translation/Translation.vue';
-export {default as HistoryView} from './grid/views/EditHistory.vue'
+export {default as GridHistoryView} from './grid/views/EditHistory.vue'
 
 // input fields
+export {default as InputBase} from './grid/inputs/Base.vue';
 export {default as InputBelongsTo} from './grid/inputs/BelongsTo.vue';
 export {default as InputBool} from './grid/inputs/Bool.vue';
 export {default as InputDateTime} from './grid/inputs/DateTime.vue';
@@ -27,6 +26,9 @@ export {FieldComponent as InputType} from './grid/common';
 export {default as Alert} from './alert/Alert.vue';
 export {default as Config} from './services/config';
 export {http as Http} from './services/http';
+
+// validation
+export {validation as InputValidation} from "./grid/mixins/validation";
 
 // stores
 export {store as Store} from './store';

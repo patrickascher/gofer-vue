@@ -40,7 +40,7 @@ export default {
       } else {
         let obj = {};
         for (let head in this.field.fields) {
-          if (this.field.fields.hasOwnProperty(head)) {
+          if (Object.prototype.hasOwnProperty.call(this.field.fields, head)) {
             obj[this.field.fields[head].name] = null
           }
         }
@@ -79,7 +79,7 @@ export default {
     addTableEntry: function (header) {
       let obj = {};
       for (let head in header) {
-        if (header.hasOwnProperty(head)) {
+        if (Object.prototype.hasOwnProperty.call(header, head)) {
           obj[header[head].name] = null
         }
       }

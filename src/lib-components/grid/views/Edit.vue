@@ -15,7 +15,7 @@ import InputFile from '@/lib-components/grid/inputs/File'
 
 
 import {FieldType} from '@/lib-components/grid/inputs/Base'
-import {FieldComponent,MODE_CREATE, MODE_TABLE, MODE_UPDATE} from '@/lib-components/grid/common'
+import {FieldComponent, MODE_CREATE, MODE_TABLE, MODE_UPDATE} from '@/lib-components/grid/common'
 import {isEqual} from 'lodash';
 import {store} from '@/lib-components/store'
 import {ALERT, SELECT} from '@/lib-components/store/modules/types'
@@ -78,6 +78,9 @@ export default {
     store.commit("selectValues/" + SELECT.UNSET_DATA);
   },
   computed: {
+    historyAllowed:function() {
+      return !_.get(this.config, 'history.disable', false) && !_.get(this.config, 'history.hide', false)
+    },
     mode: function () {
       if (typeof this.currentRoute.params === "undefined" || typeof this.currentRoute.params.pathMatch === "undefined") {
         return MODE_TABLE
@@ -116,9 +119,6 @@ export default {
     },
   },
   methods: {
-    historyAllowed() {
-      return !_.get(this.config, 'history.disable', false)
-    },
     checkChanges() {
       this.itemChanged = !isEqual(this.item, this.snapshotItem)
     },
@@ -291,7 +291,7 @@ export default {
         </v-col>
         <v-spacer cols="auto"></v-spacer>
         <v-col cols="2" class="d-flex justify-end">
-          <v-dialog v-if="historyAllowed()&&mode === 'update'"
+          <v-dialog v-if="historyAllowed&&mode === 'update'"
                     v-model="showHistory"
                     persistent
                     fullscreen
