@@ -1,3 +1,5 @@
+import {dateService} from "@/lib-components/services/date";
+
 export {default as LoginLayout} from './layout/Login.vue';
 export {default as DashLayout} from './layout/Dash.vue';
 export {default as GridLayout} from './layout/Grid.vue';
@@ -26,6 +28,8 @@ export {FieldComponent as InputType} from './grid/common';
 export {default as Alert} from './alert/Alert.vue';
 export {default as Config} from './services/config';
 export {http as Http} from './services/http';
+export {dateService as DateService} from './services/date';
+
 
 // validation
 export {validation as InputValidation} from "./grid/mixins/validation";

@@ -154,6 +154,16 @@ export default {
   },
 
   methods: {
+    openQuickfilterFn(){
+      this.config.filter.openQuickFilter=!this.config.filter.openQuickFilter
+      if (this.config.filter.openQuickFilter===false){
+        this.removeFilter()
+      }
+    },
+    removeFilter(){
+      this.filter.values = {}
+      this.addQuickfilter()
+    },
     getValue(item, decorator, separator) {
       if (!Array.isArray(item)) {
         item = [item]
@@ -594,8 +604,9 @@ export default {
             :outlined="!config.filter.openQuickFilter"
             color="primary"
             class="mr-2"
-            @click="config.filter.openQuickFilter=!config.filter.openQuickFilter">
-          <v-icon small>mdi-filter</v-icon>
+            @click="openQuickfilterFn()">
+          <v-icon v-if="!config.filter.openQuickFilter" small>mdi-filter</v-icon>
+          <v-icon v-else small>mdi-filter-remove</v-icon>
         </v-btn>
 
         <v-menu v-if="initLoaded&&config.export.length>0" offset-y>

@@ -11,7 +11,7 @@ export default {
   components: {VCombobox, VAutocomplete, VListItem, VListItemContent, VSelect},
   extends: InputBase,
   mixins: [validation],
-  props: ["api", "parent"],
+  props: ["api", "parent","snapshot"],
   data() {
     return {
       selectVal: [],
@@ -30,6 +30,28 @@ export default {
     this.getSelectValue(this.field.name) // need to be the Struct Name!!!!
   },
   computed: {
+    fieldValue: {
+      get() {
+        if (typeof this.value === "string" && this.field.type==="MultiSelect") {
+          if (this.value===""){
+            this.fieldValue=[]
+            this.snapshot[this.field.name]=[]
+          }else{
+            this.fieldValue = this.value.split(",")
+            this.snapshot[this.field.name]=this.value.split(",")
+
+          }
+        }
+        return this.value;
+      },
+      set(newValue) {
+        this.$emit('input', newValue);
+        if (Array.isArray(newValue)) {
+          // needed somehow, computed item was not triggered.
+          this.$emit('changes');
+        }
+      }
+    },
     fieldValue2: {
       get() {
         if (typeof this.value === "string") {
@@ -262,8 +284,8 @@ export default {
       :item-text="getTextFields"
       :loading="selectLoading"
 
-      :multiple="isType(FieldType.ManyToMany)"
-      :chips="isType(FieldType.ManyToMany)"
+      :multiple="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)"
+      :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||chips"
 
       v-model="fieldValue"
       :rules=rules

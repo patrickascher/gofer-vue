@@ -27,10 +27,10 @@ export const FieldComponent = function (field) {
         case FieldType.Date:
         case FieldType.DateTime:
             return "input-date-time";
+        case FieldType.MultiSelect:
         case FieldType.BelongsTo:
         case FieldType.Select:
             return "input-belongs-to";
-        case FieldType.ManyToManySR:
         case FieldType.ManyToMany:
             return "input-many-to-many";
         case FieldType.HasOne:

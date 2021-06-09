@@ -13,6 +13,7 @@ export const FieldType = {
   BelongsTo: "belongsTo",
   Bool: "Bool",
   Select: "Select",
+  MultiSelect: "MultiSelect",
   HasMany: "hasMany",
   ManyToMany: "m2m",
 };
@@ -23,7 +24,7 @@ export default {
    * field - {obj} includes the field information from the backend
    * value - is the v-model of the component
    */
-  props: ["field", "value", "translations", "outlined", "dense", "filled", "hint", "rows", "rowHeight"],
+  props: ["field", "value", "translations", "outlined", "dense","chips", "filled", "hint", "rows", "rowHeight"],
   data() {
     return {
       FieldType: FieldType

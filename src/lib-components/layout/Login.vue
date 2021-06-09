@@ -329,7 +329,7 @@ export default {
             <v-flex style=" position: relative;" offset-md1 pr-4>
               <div style="width:400px;line-height: 1.0 !important;"
                    class="mb-4 font-weight-bold display-3 white--text">
-                <h1 class="mb-2" style="font-size: 90px;color:#ffffff;line-height: 70px;font-weight: 900;">
+                <h1 class="mb-2" style="font-size: 90px;color:#000;line-height: 70px;font-weight: 900;">
                   {{ config.webserver.app.name }}</h1>
                 <hr color="error"
                     style="border-radius:5px;height:6px;margin-bottom: 50px;width:80px;"/>

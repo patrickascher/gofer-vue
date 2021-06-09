@@ -15,6 +15,7 @@ import {
   VTooltip
 } from 'vuetify/lib'
 import {http} from "@/lib-components/services/http";
+import {dateService} from "@/lib-components/services/date";
 import {store} from "@/lib-components/store";
 import {ALERT} from "@/lib-components/store/modules/types";
 
@@ -41,6 +42,9 @@ export default {
     this.getData()
   },
   methods: {
+    date(date) {
+      return dateService.UTCToLocal(date)
+    },
     userAvatar(id) {
       return this.users[id].Name.charAt(0) + this.users[id].Surname.charAt(0);
     },
@@ -222,7 +226,7 @@ export default {
           </v-tooltip>
         </template>
         <template v-slot:opposite>
-          <span>{{ h.CreatedAt }}</span>
+          <span>{{ date(h.CreatedAt) }}</span>
         </template>
         <v-card class="elevation-2">
           <!--<v-card-title class="headline">{{ h.Type }}</v-card-title>-->
