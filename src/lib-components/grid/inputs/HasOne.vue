@@ -131,13 +131,14 @@ export default {
         :loading-text="$t('GRID.LoadingData')"
         hide-default-header
         hide-default-footer
+        disable-pagination
     >
 
 
       <template v-slot:item="{ item,index }">
-        <tr>
+        <tr style="vertical-align: top;">
 
-          <td v-if="!isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields"
+          <td class="start" v-if="!isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields"
               :key="head.name">
             <component :api="api"
                        :field="head"
@@ -152,6 +153,7 @@ export default {
           </td>
           <td style="width:20px;" v-if="!isReadOnly() && isType(FieldType.HasMany)">
             <v-icon
+                class="mt-4"
                 v-if="minOne!==true||index!==0"
                 @click="deleteTableEntry(index)"
                 small
