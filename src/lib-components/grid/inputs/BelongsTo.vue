@@ -19,6 +19,7 @@ export default {
       search: null,
       _timerId: null,
       countryID: null,
+      isMultiple:false,
     }
   },
   watch: {
@@ -32,14 +33,14 @@ export default {
   computed: {
     fieldValue: {
       get() {
-        if (typeof this.value === "string" && this.field.type==="MultiSelect") {
+        if (typeof this.value === "string" && (this.field.type==="MultiSelect" || this.isMultiple)) {
+          console.log("cal",this.value)
           if (this.value===""){
             this.fieldValue=[]
             this.snapshot[this.field.name]=[]
           }else{
             this.fieldValue = this.value.split(",")
             this.snapshot[this.field.name]=this.value.split(",")
-
           }
         }
         return this.value;
@@ -141,11 +142,14 @@ export default {
         return
       }
 
+      this.isMultiple = _.get(this.field, "options.select.0.Multiple", false)
+
       // user defined his own items.
       if (_.get(this.field, "options.select.0.Items", false) !== false) {
         this.selectVal = this.field.options.select[0].Items;
         return
       }
+
 
       // load all items of the relation
       //this.loading = true;
@@ -284,7 +288,7 @@ export default {
       :item-text="getTextFields"
       :loading="selectLoading"
 
-      :multiple="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)"
+      :multiple="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple"
       :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||chips"
 
       v-model="fieldValue"
