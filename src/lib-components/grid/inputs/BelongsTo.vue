@@ -34,7 +34,6 @@ export default {
     fieldValue: {
       get() {
         if (typeof this.value === "string" && (this.field.type==="MultiSelect" || this.isMultiple)) {
-          console.log("cal",this.value)
           if (this.value===""){
             this.fieldValue=[]
             this.snapshot[this.field.name]=[]
@@ -289,7 +288,9 @@ export default {
       :loading="selectLoading"
 
       :multiple="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple"
-      :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||chips"
+      :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple||chips"
+      :deletable-chips="isMultiple"
+      :small-chips="isMultiple"
 
       v-model="fieldValue"
       :rules=rules
