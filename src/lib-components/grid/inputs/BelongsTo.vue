@@ -277,7 +277,7 @@ export default {
   <v-select
       v-else
       :clearable="!isRequired()"
-      :disabled="isReadOnly()"
+      :disabled="isReadOnly()||disabled"
       v-show="!isHidden()"
       :label="getLabel"
       :items="selectVal"
@@ -291,7 +291,6 @@ export default {
       :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple||chips"
       :deletable-chips="isMultiple"
       :small-chips="isMultiple"
-
       v-model="fieldValue"
       :rules=rules
       :dense="dense"
