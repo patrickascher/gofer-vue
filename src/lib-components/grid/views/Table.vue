@@ -280,6 +280,9 @@ export default {
     },
     addQuickfilter() {
       if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
+        // reset pagination
+        this.pagination.itemsPerPage =15
+        this.pagination.page=1
         this.getData() //no header- before with header, check why?
         this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
       }
