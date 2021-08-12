@@ -103,8 +103,6 @@ export default {
       } else {
         this.fieldValue[field] = value;
       }
-
-      console.log(this.fieldValue);
     },
   }
 }

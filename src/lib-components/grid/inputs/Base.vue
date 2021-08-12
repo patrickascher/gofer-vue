@@ -24,7 +24,7 @@ export default {
    * field - {obj} includes the field information from the backend
    * value - is the v-model of the component
    */
-  props: ["field", "value", "translations","disabled", "outlined", "dense","chips", "filled", "hint", "rows", "rowHeight"],
+  props: ["field", "value", "translations","disabled", "outlined", "dense","chips","smallChips", "filled", "hint", "rows", "rowHeight"],
   data() {
     return {
       FieldType: FieldType

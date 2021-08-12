@@ -3,6 +3,7 @@ import {dateService} from "@/lib-components/services/date";
 export {default as LoginLayout} from './layout/Login.vue';
 export {default as DashLayout} from './layout/Dash.vue';
 export {default as GridLayout} from './layout/Grid.vue';
+export {default as DashNavigationLayout} from './layout/dash/Navigation.vue';
 
 // views
 export {default as GridTableView} from './grid/views/Table.vue'
@@ -30,7 +31,6 @@ export {default as Config} from './services/config';
 export {http as Http} from './services/http';
 export {dateService as DateService} from './services/date';
 
-
 // validation
 export {validation as InputValidation} from "./grid/mixins/validation";
 
@@ -38,6 +38,7 @@ export {validation as InputValidation} from "./grid/mixins/validation";
 export {store as Store} from './store';
 export {ALERT as StoreAlert} from './store/modules/types';
 export {SELECT as StoreSelect} from './store/modules/types';
+export {USER as StoreUser} from './store/modules/types';
 
 export {userService as UserService} from './services/user';
 export {i18nService as I18nService} from './services/i18n';
