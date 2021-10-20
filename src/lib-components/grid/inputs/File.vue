@@ -48,7 +48,6 @@ export default {
       this.progressInfos[idx] = {percentage: 0, fileName: file.name};
       UploadService.upload(this.url(), file, (event) => {
         this.progressInfos[idx].percentage = Math.round(100 * event.loaded / event.total);
-        console.log(this.progressInfos[idx].percentage)
       })
           .then((response) => {
             store.commit('alert/' + ALERT.SUCCESS, this.$t('GRID.Uploaded'));

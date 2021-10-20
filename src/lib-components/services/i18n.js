@@ -43,8 +43,6 @@ function loadLanguageAsync(lang, force) {
         return Promise.resolve(setI18nLanguage(lang))
     }
 
-    console.log("load http base:",http.defaults.baseURL)
-
     return http.get(`/lang/${lang}.json`).then(
         messages => {
             i18n.setLocaleMessage(lang, messages.data)
