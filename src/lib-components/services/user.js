@@ -28,7 +28,7 @@ const ApiForgotPW = "/pw/forgot"
 const ApiChangePW = "/pw/change"
 
 const ApiNavigation = "/navigation"
-const UrlLogin = "/"
+export const UrlLogin = "/"
 const UrlLogout = "/logout"
 const UrlAfterLogin = "/dash"
 

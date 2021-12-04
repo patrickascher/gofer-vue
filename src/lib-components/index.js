@@ -25,6 +25,12 @@ export {default as InputTextArea} from './grid/inputs/TextArea.vue';
 export {FieldType as InputFieldType} from './grid/inputs/Base.vue';
 export {FieldComponent as InputType} from './grid/common';
 
+//common
+export {MODE_CREATE as GRID_CREATE} from './grid/common';
+export {MODE_UPDATE as GRID_UPDATE} from './grid/common';
+export {MODE_TABLE as GRID_TABLE} from './grid/common';
+
+
 // services
 export {default as Alert} from './alert/Alert.vue';
 export {default as Config} from './services/config';

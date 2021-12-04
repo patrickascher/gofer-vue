@@ -1,5 +1,5 @@
 <script>
-import {VAutocomplete, VCombobox, VListItem, VListItemContent, VSelect} from 'vuetify/lib'
+import {VAutocomplete, VCombobox, VListItem, VListItemTitle, VListItemContent, VSelect} from 'vuetify/lib'
 import InputBase from '@/lib-components/grid/inputs/Base'
 import {validation} from '@/lib-components/grid/mixins/validation'
 import {store} from '@/lib-components/store'
@@ -8,7 +8,7 @@ import {http} from '@/lib-components/services/http'
 
 
 export default {
-  components: {VCombobox, VAutocomplete, VListItem, VListItemContent, VSelect},
+  components: {VCombobox, VAutocomplete, VListItem, VListItemTitle, VListItemContent, VSelect},
   extends: InputBase,
   mixins: [validation],
   props: ["api", "parent","snapshot"],

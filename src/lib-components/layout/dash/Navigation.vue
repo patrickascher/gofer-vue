@@ -9,8 +9,8 @@ export default {
   data() {
     return {
       loading: true,
-      hrefPrivacy:this.$t('NAVIGATION.PrivacyHref'),
-      hrefImpress:this.$t('NAVIGATION.ImpressHref'),
+      hrefPrivacy:this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF'),
+      hrefImpress:this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF'),
       items: Object,
       drawer: true,
     }

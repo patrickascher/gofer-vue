@@ -15,10 +15,11 @@ import {
   VRow,
   VSkeletonLoader,
   VSpacer,
-  VTextField
+  VTextField,
 } from 'vuetify/lib'
 import {http} from '@/lib-components/services/http'
 import {Config} from "@/lib-components";
+import "./../mdiView";
 
 
 export default {
@@ -165,6 +166,10 @@ export default {
       this.addQuickfilter()
     },
     getValue(item, decorator, separator) {
+
+      if (decorator===""){
+        return item
+      }
       if (!Array.isArray(item)) {
         item = [item]
       }
@@ -176,19 +181,23 @@ export default {
       _.forEach(item, function (value) {
         let decor = decorator
         _.forEach(matches, function (match) {
-          let id = match.replace("{{", "").replace("}}", "")
-          if (_.get(value, id, false) !== false) {
-            if (typeof value[id] === "object") {
+          let id = match.replace("{{", "").replace("}}", "").split(".")
+          if (_.get(value, id[0], false) !== false) {
+            if (typeof value[id[0]] === "object") {
               let tmpValue = []
-              _.forEach(value[id], function (value) {
-                tmpValue.push(value[Object.keys(value)[0]])
+              _.forEach(value[id[0]], function (value) {
+                if (id.length > 1){
+                  tmpValue.push(value[id[1]])
+                }else{
+                  tmpValue.push(value[Object.keys(value)[0]])
+                }
               });
-              decor = decor.replace("{{" + id + "}}", tmpValue.join(", "))
+              decor = decor.replace("{{" + id.join(".") + "}}", tmpValue.join(", "))
               return false;
             }
-            decor = decor.replace("{{" + id + "}}", value[id])
+            decor = decor.replace("{{" + id.join(".") + "}}", value[id[0]])
           } else {
-            decor = decor.replace("{{" + id + "}}", "")
+            decor = decor.replace("{{" + id.join(".") + "}}", "")
           }
         });
         rv.push(decor)
@@ -198,7 +207,6 @@ export default {
     },
     hasOwnView(header) {
       return _.get(header, 'view', false) !== false;
-
     },
     noEscaping(header) {
       return _.get(header, 'options.noEscaping.0', false) !== false;
@@ -217,8 +225,8 @@ export default {
 
       //head information
       let head = "";
-      // no header information if it got already loaded
-      if (withHeader !== true && this.items.length !== 0) {
+      // will load the headers only if requested or no headers are loaded yet.
+      if (withHeader !== true && this.headers.length !== 0) {
         head = "/onlyData/1";
       }
 
@@ -299,7 +307,6 @@ export default {
     getData(withHeader) {
       this.vuetifyLoading = true; // set vuetify loading indicator
       http.get(this.backendUrl(withHeader)).then((resp) => {
-
 
         // only set data if config exists. (not dataOnly load)
         if (_.get(resp.data, "config", null) !== null) {
@@ -675,7 +682,7 @@ export default {
         <tr style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :api="api" :is="header.view"></component>
+              <component v-model="item[header.name]" :parent-data="item" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]">

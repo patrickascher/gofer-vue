@@ -22,13 +22,14 @@ export default {
       let color = store.state.alert.color;
 
       if (msg !== null) {
-
-        // show if response has a json error message, otherwise show the normal error message.
-        // if only a string was set, the string will be displayed.
-        if (typeof msg.response !== 'undefined' && msg.response.hasOwnProperty('data') && msg.response.data.hasOwnProperty('error')) {
-          msg = msg.response.data.error
-        } else if (msg.hasOwnProperty('message')) {
-          msg = msg.message
+        if(typeof msg!=="string"){
+          // show if response has a json error message, otherwise show the normal error message.
+          // if only a string was set, the string will be displayed.
+          if (typeof msg.response !== 'undefined' && msg.response.hasOwnProperty('data') && msg.response.data.hasOwnProperty('error')) {
+            msg = msg.response.data.error
+          } else if (msg.hasOwnProperty('message')) {
+            msg = msg.message
+          }
         }
 
         this.show = true;

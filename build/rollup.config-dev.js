@@ -92,7 +92,7 @@ if (!argv.format || argv.format === 'es') {
     input: 'src/entry.esm.js',
     external,
     output: {
-      file: '/Users/x/goProjects/src/github.com/patrickascher/fedex-schenker/frontend/node_modules/gofer-vue/dist/gofer-vue.esm.js',
+      file: '/Users/patrickascher/go/src/ta/frontend/node_modules/gofer-vue/dist/gofer-vue.esm.js',
       format: 'esm',
       exports: 'named',
     },
@@ -124,7 +124,7 @@ if (!argv.format || argv.format === 'cjs') {
     external,
     output: {
       compact: true,
-      file: '/Users/x/goProjects/src/github.com/patrickascher/playground/frontend/node_modules/gofer-vue/dist/gofer-vue.ssr.js',
+      file: '/Users/patrickascher/go/src/ta/frontend/node_modules/gofer-vue/dist/gofer-vue.ssr.js',
       format: 'cjs',
       name: 'GoferVue',
       exports: 'auto',
@@ -154,7 +154,7 @@ if (!argv.format || argv.format === 'iife') {
     external,
     output: {
       compact: true,
-      file: '/Users/x/goProjects/src/github.com/patrickascher/playground/frontend/node_modules/gofer-vue/dist/gofer-vue.min.js',
+      file: '/Users/patrickascher/go/src/ta/frontend/node_modules/gofer-vue/dist/gofer-vue.min.js',
       format: 'iife',
       name: 'GoferVue',
       exports: 'auto',

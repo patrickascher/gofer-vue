@@ -31,8 +31,9 @@ export default {
   },
   computed: {
     getComponent() {
-      if (_.get(this.currentRoute, "meta.grid.view", false) !== false) {
-        return this.currentRoute.meta.grid.view
+      let mode =this.mode()
+      if (_.get(this.currentRoute, "meta.grid.view"+mode[0].toUpperCase() + mode.substring(1), false) !== false) {
+        return this.currentRoute.meta.grid["view"+mode[0].toUpperCase() + mode.substring(1)]
       }
       if (this.mode() === MODE_TABLE) {
         return "grid-table-view";
