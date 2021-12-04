@@ -105,7 +105,7 @@ export default {
       return _.get(this.field, "options.combobox", false)
     },
     returnObject() {
-      return _.get(this.field, "options.select.0.ReturnID", false) === false;
+      return _.get(this.field, "options.select.0.ReturnValue", false) === false;
     },
     noDataTxt() {
       return _.get(this.field, 'options.no-data.0', 'Please enter the search value')

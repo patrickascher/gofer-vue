@@ -431,7 +431,7 @@ export default {
 
             // callback decorator
             if (_.get(this.headers[i], "options.decorator", false) !== false &&
-                _.get(this.headers[i], "options.select.0.ReturnID", false) === false //why? - was true by default before
+                _.get(this.headers[i], "options.select.0.ReturnValue", false) === false //why? - was true by default before
             ) {
 
               let head = this.headers[i]
