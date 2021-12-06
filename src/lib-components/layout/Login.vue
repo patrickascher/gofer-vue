@@ -92,6 +92,19 @@ export default {
     }
   },
   computed: {
+  // darkmode - create a better solution for it
+   darkClassMode() {
+       if (!this.config.webserver.app.bgDark){
+         return "font-weight-light headline"
+       }
+       return "font-weight-light headline white--text"
+   },
+    darkClassModeHeadline() {
+          if (!this.config.webserver.app.bgDark){
+            return "mb-4 font-weight-bold display-3"
+          }
+          return "mb-4 font-weight-bold display-3 white--text"
+      },
     forgotPasswordDisabled() {
       return !_.get(this.config, 'webserver.auth.providers.' + this.provider + '.forgotpassword', false)
     },
@@ -328,13 +341,13 @@ export default {
           <v-layout align-center row fill-height>
             <v-flex style=" position: relative;" offset-md1 pr-4>
               <div style="width:400px;line-height: 1.0 !important;"
-                   class="mb-4 font-weight-bold display-3 white--text">
+                   :class="darkClassModeHeadline">
                 <h1 class="mb-2" style="font-size: 90px;line-height: 70px;font-weight: 900;">
                   {{ config.webserver.app.name }}</h1>
                 <hr color="error"
                     style="border-radius:5px;height:6px;margin-bottom: 50px;width:80px;"/>
               </div>
-              <div class="font-weight-light headline  white--text"
+              <div :class="darkClassMode"
                    v-html="$t('CONTROLLER.auth.Controller.Login.Description')">
               </div>
             </v-flex>
