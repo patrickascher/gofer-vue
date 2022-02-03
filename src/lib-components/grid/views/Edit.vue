@@ -152,6 +152,10 @@ export default {
             item[entry.name] = null
           }
         }
+        // default value will be displayed if set on creation mode.
+        if (_.get(entry, 'defaultValue', false)!==false){
+          item[entry.name]=entry.defaultValue
+        }
       });
       return item
     },

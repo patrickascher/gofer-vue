@@ -95,9 +95,9 @@ export default {
   // darkmode - create a better solution for it
    darkClassMode() {
        if (!this.config.webserver.app.bgDark){
-         return "font-weight-light headline"
+         return "font-weight-light headline mr-12"
        }
-       return "font-weight-light headline white--text"
+       return "font-weight-light headline mr-12 white--text"
    },
     darkClassModeHeadline() {
           if (!this.config.webserver.app.bgDark){
@@ -339,7 +339,7 @@ export default {
               :style="{ backgroundImage: 'url('+require(`@/assets/${config.webserver.app.bgImg}`)+')' }">
         <div align-center style="height:100%">
           <v-layout align-center row fill-height>
-            <v-flex style=" position: relative;" offset-md1 pr-4>
+            <v-flex style=" position: relative;" offset-md1 mr-4>
               <div style="width:400px;line-height: 1.0 !important;"
                    :class="darkClassModeHeadline">
                 <h1 class="mb-2" style="font-size: 90px;line-height: 70px;font-weight: 900;">
