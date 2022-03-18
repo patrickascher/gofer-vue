@@ -57,7 +57,9 @@ export default {
       items: [],
       itemsTotal: 0,
       // vuetify pagination object
-      pagination: {},
+      pagination: {
+        itemsPerPage: 10
+      },
       // filter data
       filter: {
         values: {},
@@ -155,19 +157,19 @@ export default {
   },
 
   methods: {
-    openQuickfilterFn(){
-      this.config.filter.openQuickFilter=!this.config.filter.openQuickFilter
-      if (this.config.filter.openQuickFilter===false){
+    openQuickfilterFn() {
+      this.config.filter.openQuickFilter = !this.config.filter.openQuickFilter
+      if (this.config.filter.openQuickFilter === false) {
         this.removeFilter()
       }
     },
-    removeFilter(){
+    removeFilter() {
       this.filter.values = {}
       this.addQuickfilter()
     },
     getValue(item, decorator, separator) {
 
-      if (decorator===""){
+      if (decorator === "") {
         return item
       }
       if (!Array.isArray(item)) {
@@ -186,9 +188,9 @@ export default {
             if (typeof value[id[0]] === "object") {
               let tmpValue = []
               _.forEach(value[id[0]], function (value) {
-                if (id.length > 1){
+                if (id.length > 1) {
                   tmpValue.push(value[id[1]])
-                }else{
+                } else {
                   tmpValue.push(value[Object.keys(value)[0]])
                 }
               });
@@ -271,26 +273,11 @@ export default {
 
       return encodeURI(this.api + head + "/limit/" + this.pagination.itemsPerPage + "/page/" + this.pagination.page + order + filter + filterCust)
     },
-    applyFilter() {
-      // filter information
-      // explicit set filter to 0 to avoid problems with an unchecked default filter
-      //  let filter = "";
-      //if (_.get(this.conf, 'activeFilter.id', false) === false) {
-      // RESET group and sort
-      this.pagination.sortBy = []
-      this.pagination.sortDesc = []
-      this.pagination.groupBy = []
-      this.pagination.groupDesc = []
-      this.pagination.itemsPerPage = 10
-      //}
-
-      this.getData()
-    },
     addQuickfilter() {
       if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
         // reset pagination
-        this.pagination.itemsPerPage =15
-        this.pagination.page=1
+        this.pagination.itemsPerPage = 10
+        this.pagination.page = 1
         this.getData() //no header- before with header, check why?
         this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
       }
@@ -328,7 +315,7 @@ export default {
           this.config.delete = !_.get(resp.data, "config.action.disableDelete", false)
 
           // filter
-          this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", false)
+          this.config.filter.rowsPerPage, this.pagination.itemsPerPage  = _.get(resp.data, "config.filter.rowsPerPage", 10)
           this.config.filter.allowedRowsPerPage = _.get(resp.data, "config.filter.allowedRowsPerPage", [5, 10, 15, 25, 50, 100, 500])
           this.config.filter.openQuickFilter = _.get(resp.data, "config.filter.openQuickFilter", false)
           this.config.filter.disable = _.get(resp.data, "config.filter.disable", false)
@@ -426,7 +413,6 @@ export default {
         if (this.headers.length > 0) {
 
           for (let i = 0; i < this.headers.length; i++) {
-
 
 
             // callback decorator
@@ -655,7 +641,6 @@ export default {
 
         :no-data-text="$t('GRID.NoData')"
         :loading-text="$t('GRID.LoadingData')"
-
         :loading="vuetifyLoading"
         :headers="headersNotHidden"
         :items="items"
