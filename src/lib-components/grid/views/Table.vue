@@ -218,7 +218,7 @@ export default {
       return false;
     },
     callExport(type) {
-      window.open(Config.get('webserver.domain') + "/" + this.backendUrl(true) + "/mode/export/type/" + type);
+      window.open(this.backendUrl(true) + "/mode/export/type/" + type);
     },
     /**
      * backendUrl is returning the backend api url with sort,filter and header information.
