@@ -231,7 +231,9 @@ export default {
       if (withHeader !== true && this.headers.length !== 0) {
         head = "/onlyData/1";
       }
-
+      if (withHeader === "pagination" && this.headers.length !== 0) {
+        head = "/onlyData/2";
+      }
 
       //order by - optional
       let order = "";
@@ -278,7 +280,7 @@ export default {
         // reset pagination
         this.pagination.itemsPerPage = 10
         this.pagination.page = 1
-        this.getData() //no header- before with header, check why?
+        this.getData("pagination") //pagination must be reloaded wiht a filter
         this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
       }
     },
@@ -293,7 +295,8 @@ export default {
      */
     getData(withHeader) {
       this.vuetifyLoading = true; // set vuetify loading indicator
-      http.get(this.backendUrl(withHeader)).then((resp) => {
+      let url = this.backendUrl(withHeader)
+      http.get(url).then((resp) => {
 
         // only set data if config exists. (not dataOnly load)
         if (_.get(resp.data, "config", null) !== null) {
@@ -315,9 +318,14 @@ export default {
           this.config.delete = !_.get(resp.data, "config.action.disableDelete", false)
 
           // filter
-          this.config.filter.rowsPerPage, this.pagination.itemsPerPage  = _.get(resp.data, "config.filter.rowsPerPage", 10)
+          this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", 10)
           this.config.filter.allowedRowsPerPage = _.get(resp.data, "config.filter.allowedRowsPerPage", [5, 10, 15, 25, 50, 100, 500])
-          this.config.filter.openQuickFilter = _.get(resp.data, "config.filter.openQuickFilter", false)
+          // open filter bar if a filter is set or configured so.
+          if (url.includes("filter/") || url.includes("filter_")) {
+            this.config.filter.openQuickFilter = true;
+          } else {
+            this.config.filter.openQuickFilter = _.get(resp.data, "config.filter.openQuickFilter", false)
+          }
           this.config.filter.disable = _.get(resp.data, "config.filter.disable", false)
           this.config.filter.disableCustomFilter = _.get(resp.data, "config.filter.disableCustomFilter", false)
           this.config.filter.disableQuickFilter = _.get(resp.data, "config.filter.disableQuickFilter", false)
@@ -497,7 +505,7 @@ export default {
           store.commit('alert/' + ALERT.SUCCESS, this.$t('GRID.ItemDeleted'));
 
           //refresh
-          this.getData()
+          this.getData("pagination")
         }).catch((error) => {
               store.commit('alert/' + ALERT.ERROR, error);
             }
