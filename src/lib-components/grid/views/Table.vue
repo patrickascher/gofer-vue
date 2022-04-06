@@ -149,6 +149,9 @@ export default {
         if (_.get(head, "remove", false)) {
           return false
         }
+        if (_.get(head, "hidden", false)) {
+          return false
+        }
         head.text = this.$t(head.title)
         return typeof head.hide === 'undefined';
       })
@@ -646,7 +649,6 @@ export default {
     <!-- data grid -->
     <v-data-table
         :footer-props="{'showFirstLastPage':true,'items-per-page-options': config.filter.allowedRowsPerPage,'items-per-page-text':$t('GRID.RowsPerPage'),'page-text':'{0}-{1} '+$t('GRID.XofY')+' {2}'}"
-
         :no-data-text="$t('GRID.NoData')"
         :loading-text="$t('GRID.LoadingData')"
         :loading="vuetifyLoading"
