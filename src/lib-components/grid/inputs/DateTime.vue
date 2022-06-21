@@ -41,10 +41,14 @@ export default {
       set(newValue) {
         if (this.fieldValue != null) {
           let originalValue = this.fieldValue;
-          let date = originalValue.substr(0, originalValue.indexOf('T') + 1);
 
-          let second = (!this.field.seconds) ? ":00Z" : ":Z";
-          this.fieldValue = date + newValue + second
+          if (originalValue.indexOf('T')){ // needed for GO, but not for quickfilter
+            let date = originalValue.substr(0, originalValue.indexOf('T') + 1);
+
+            let second = (!this.field.seconds) ? ":00Z" : ":Z";
+            this.fieldValue = date + newValue + second
+          }
+
         }
       }
     },

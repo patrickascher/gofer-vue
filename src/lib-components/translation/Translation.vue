@@ -215,6 +215,20 @@ export default {
       this.dialogValue = null;
       this.panelSwitch = this.translated.length - 1;
     },
+    syncLanguage(){
+      http.request({
+        url: this.$route.meta.api+"/lang/"+i18nService.i18n.locale+"/mode/sync",
+        method: "GET",
+        data: this.items
+      }).then((resp) => {
+        store.commit('alert/' + ALERT.SUCCESS, "Translation " + i18nService.i18n.locale.toUpperCase() + " synced!");
+        this.loading = false;
+        i18nService.loadLanguageAsync(i18nService.i18n.locale, true)
+      }).catch((error) => {
+        this.loading = false;
+        store.commit('alert/' + ALERT.ERROR, error);
+      });
+    },
     /**
      * saveLanguage - will save the actual language group tab.
      */
@@ -417,6 +431,16 @@ export default {
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-btn
+            color="primary"
+            @click="syncLanguage()"
+            small
+            class="mb-3"
+        >
+          {{ $t('CONTROLLER.locale.Controller.Translation.Sync') }}
+        </v-btn>
+
       </v-col>
     </v-row>
 

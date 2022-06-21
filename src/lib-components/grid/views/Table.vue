@@ -20,6 +20,7 @@ import {
 import {http} from '@/lib-components/services/http'
 import {Config} from "@/lib-components";
 import "./../mdiView";
+import InputDateTime from '@/lib-components/grid/inputs/DateTime'
 
 
 export default {
@@ -33,6 +34,7 @@ export default {
     VListItem,
     VListItemTitle,
     VTextField,
+    InputDateTime,
     VIcon,
     VBtn,
     VFlex,
@@ -160,6 +162,14 @@ export default {
   },
 
   methods: {
+    dateOnly(v,h){
+      if (_.get(h, 'options.dateOnly', false) !== false) {
+        if(v!==null && v.length>0){
+          return v.substring(0, 10)
+        }
+      }
+      return v
+    },
     openQuickfilterFn() {
       this.config.filter.openQuickFilter = !this.config.filter.openQuickFilter
       if (this.config.filter.openQuickFilter === false) {
@@ -666,8 +676,19 @@ export default {
                 v-slot:body.prepend="{ headers }">
         <tr>
           <td class="px-2" v-for="header in headers">
-            <v-text-field @change="addQuickfilter" v-if="header.filterable" single-line dense
+            <v-text-field @change="addQuickfilter" v-if="header.filterable&&header.type!=='Date'" single-line dense
                           v-model="filter.values[header.name]"></v-text-field>
+
+
+           <input-date-time v-if="header.filterable&&header.type==='Date'" dense @input="addQuickfilter" :field="header" v-model="filter.values[header.name]"></input-date-time>
+
+
+
+
+
+
+
+
           </td>
         </tr>
       </template>
@@ -684,7 +705,7 @@ export default {
             </div>
 
             <div v-else>
-              {{ item[header.name] }}
+              {{ dateOnly(item[header.name],header) }}
             </div>
             <div class="grid_action" v-if="header.value === 'grid_action' && showAction">
               <v-icon
