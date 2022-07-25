@@ -1,6 +1,7 @@
 import {USER} from "./../store/modules/types";
 import {http} from './http'
 import {store} from "./../store"
+import {i18nService} from "@/lib-components/services/i18n";
 
 export const userService = {
     login,
@@ -142,6 +143,7 @@ function initUser() {
         if (localStorage.user != null) {
             let userdata = JSON.parse(localStorage.user)
             store.commit("user/" + USER.SET_DATE, userdata);
+            i18nService.loadLanguageAsync(userdata.Options.Language,false)
             return userdata
         }
         return null

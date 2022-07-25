@@ -1,6 +1,6 @@
 <script>
 import {store} from '@/lib-components/store'
-import {ALERT} from '@/lib-components/store/modules/types'
+import {ALERT, USER} from '@/lib-components/store/modules/types'
 import {
   VBtn,
   VCol,
@@ -53,7 +53,7 @@ export default {
       vuetifyError: false,
       primaryKey: [],
       headers: [],
-
+user:{},
 
       // Items from the backend.
       items: [],
@@ -89,6 +89,9 @@ export default {
         delete: true
       },
     }
+  },
+  created() {
+    this.user = store.getters['user/' + USER.GET_DATA]
   },
   /**
    * watch is used to check any changes of the vuetify pagination.
@@ -162,12 +165,25 @@ export default {
   },
 
   methods: {
-    dateOnly(v,h){
-      if (_.get(h, 'options.dateOnly', false) !== false) {
-        if(v!==null && v.length>0){
+    callbacks(v,h){
+      if (v===null){
+        return ""
+      }
+      if (h.type === "Date"){
+        if(this.user.Options.DateFormat==="YYYY-MM-DD"){
           return v.substring(0, 10)
+        }else{
+          return v.substring(8,10)+"."+v.substring(5,7)+"."+v.substring(0,4)
+        }
+
+      }else if (h.type==="DateTime"){
+        if(this.user.Options.DateFormat==="YYYY-MM-DD"){
+          return v.substring(0,4)+"-"+v.substring(5,7)+"-"+v.substring(8,10)+" "+v.substring(11,13)+":"+v.substring(14,16)
+        }else{
+          return v.substring(8,10)+"."+v.substring(5,7)+"."+v.substring(0,4)+" "+v.substring(11,13)+":"+v.substring(14,16)
         }
       }
+
       return v
     },
     openQuickfilterFn() {
@@ -675,20 +691,10 @@ export default {
       <template v-if="!config.filter.disable&&!config.filter.disableQuickFilter&&config.filter.openQuickFilter"
                 v-slot:body.prepend="{ headers }">
         <tr>
-          <td class="px-2" v-for="header in headers">
-            <v-text-field @change="addQuickfilter" v-if="header.filterable&&header.type!=='Date'" single-line dense
+          <td class="px-2" style="vertical-align: top;" v-for="header in headers">
+            <v-text-field @change="addQuickfilter" :placeholder="$t(header.title)" v-if="header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" single-line dense
                           v-model="filter.values[header.name]"></v-text-field>
-
-
-           <input-date-time v-if="header.filterable&&header.type==='Date'" dense @input="addQuickfilter" :field="header" v-model="filter.values[header.name]"></input-date-time>
-
-
-
-
-
-
-
-
+           <input-date-time class="ma-2" dense single-line :from-to="true" v-if="header.filterable&&header.type==='Date'||header.filterable&&header.type==='DateTime'" @input="addQuickfilter" :field="header" v-model="filter.values[header.name]"></input-date-time>
           </td>
         </tr>
       </template>
@@ -705,7 +711,7 @@ export default {
             </div>
 
             <div v-else>
-              {{ dateOnly(item[header.name],header) }}
+              {{ callbacks(item[header.name],header) }}
             </div>
             <div class="grid_action" v-if="header.value === 'grid_action' && showAction">
               <v-icon

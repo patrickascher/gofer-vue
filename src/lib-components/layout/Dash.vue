@@ -16,7 +16,8 @@ import {
   VMain,
   VMenu,
   VSpacer,
-  VToolbarTitle
+  VToolbarTitle,
+  VDialog
 } from 'vuetify/lib'
 import _ from 'lodash'
 import {userService} from '../services/user'
@@ -24,6 +25,8 @@ import {ALERT, USER} from '../store/modules/types'
 import {store} from '../store'
 import {i18nService} from '../services/i18n'
 import Navigation from '@/lib-components/layout/dash/Navigation'
+import UserProfile from '@/lib-components/layout/Profile'
+
 import Config from '../services/config'
 
 
@@ -34,7 +37,10 @@ export default {
       logo: Config.get('webserver.app.logoSmall'),
       navMini: false,
       userMenu: false,
+     profileDialog:false,
+      profileDialogPassword:false,
       languages: {},
+      user:{},
     }
   },
   created() {
@@ -57,6 +63,7 @@ export default {
   },
   components: {
     Navigation,
+    UserProfile,
     VAppBar,
     VAppBarNavIcon,
     VIcon,
@@ -73,7 +80,8 @@ export default {
     VListItemContent,
     VListItemTitle,
     VListItemSubtitle,
-    VDivider
+    VDivider,
+    VDialog
   },
   methods: {
     changeLang(lang) {
@@ -170,6 +178,28 @@ export default {
               <v-list-item-subtitle>{{ roles }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+          <v-divider></v-divider>
+
+          <v-dialog v-model="profileDialog"
+                    persistent
+                    fullscreen
+                    hide-overlay
+                    transition="dialog-bottom-transition">
+            <template v-slot:activator="{ on, attrs }">
+
+              <v-list-item  @click="profileDialogPassword=true"  v-on="on">
+                <v-list-item-title>Change password</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="profileDialogPassword=false" v-on="on">
+                <v-list-item-title >Profile</v-list-item-title>
+              </v-list-item>
+
+            </template>
+            <user-profile    @closeMenu="updateMenu" :passwordView="profileDialogPassword" :api="'/profile/mode/update/ID/'+user.Login"
+                             v-model="profileDialog"></user-profile>
+          </v-dialog>
+
           <v-divider></v-divider>
           <v-list-item to="/logout">
             <v-list-item-title>Logout</v-list-item-title>

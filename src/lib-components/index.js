@@ -1,5 +1,6 @@
 import {dateService} from "@/lib-components/services/date";
 
+export {default as UserProfile} from './layout/Profile.vue';
 export {default as LoginLayout} from './layout/Login.vue';
 export {default as DashLayout} from './layout/Dash.vue';
 export {default as GridLayout} from './layout/Grid.vue';
