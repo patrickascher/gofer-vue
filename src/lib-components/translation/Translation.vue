@@ -465,9 +465,9 @@ export default {
               <v-progress-circular
                   size="40"
                   width="5"
-                  :value="Math.round((translation.Translated/rawMessages.length)*100)"
+                  :value="(rawMessages==null?0:Math.round((translation.Translated/rawMessages.length)*100))"
                   color="primary"
-              >{{ Math.round((translation.Translated / rawMessages.length) * 100) }}%
+              >{{ (rawMessages==null?0:Math.round((translation.Translated / rawMessages.length)*100)) }}%
               </v-progress-circular>
             </v-col>
           </v-row>
