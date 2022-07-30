@@ -11,6 +11,7 @@ export {default as GridTableView} from './grid/views/Table.vue'
 export {default as GridEditView} from './grid/views/Edit.vue'
 export {default as TranslationView} from './translation/Translation.vue';
 export {default as GridHistoryView} from './grid/views/EditHistory.vue'
+export {default as GridFilterView} from './grid/views/UserFilter.vue'
 
 // input fields
 export {default as InputBase} from './grid/inputs/Base.vue';

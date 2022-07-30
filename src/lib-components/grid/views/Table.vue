@@ -1,6 +1,6 @@
 <script>
 import {store} from '@/lib-components/store'
-import {ALERT, USER} from '@/lib-components/store/modules/types'
+import {ALERT, USER,NAVIGATION} from '@/lib-components/store/modules/types'
 import {
   VBtn,
   VCol,
@@ -16,11 +16,15 @@ import {
   VSkeletonLoader,
   VSpacer,
   VTextField,
+  VDialog,
+VDivider,
+VListItemGroup
 } from 'vuetify/lib'
 import {http} from '@/lib-components/services/http'
 import {Config} from "@/lib-components";
 import "./../mdiView";
 import InputDateTime from '@/lib-components/grid/inputs/DateTime'
+import UserFilter from '@/lib-components/grid/views/UserFilter'
 
 
 export default {
@@ -43,7 +47,11 @@ export default {
     VSkeletonLoader,
     VProgressLinear,
     VSpacer,
-    VDataTable
+    VDataTable,
+    VDialog,
+    VDivider,
+    VListItemGroup,
+    UserFilter
   },
   props: {api: String},
   data() {
@@ -51,6 +59,8 @@ export default {
       refreshHeader: [], // needed for reloading the headers
       vuetifyLoading: true,
       vuetifyError: false,
+      showFilterMenu:false,
+      dialogFilter:false,
       primaryKey: [],
       headers: [],
 user:{},
@@ -72,6 +82,14 @@ user:{},
         id: null,
         title: "",
         description: null,
+        userFilterList:[],
+        userActiveFilter:{
+          id:null,
+          group: null,
+          rowsPerPage: 0,
+          sortby: [],
+          sortdesc: []
+        },
         filter: {
           disable: null,
           disableQuickFilter: null,
@@ -81,7 +99,6 @@ user:{},
           rowsPerPage: null,
         },
         export: [],
-        activeFilter: {id: null, group: null, rowsPerPage: 0, sortby: [], sortdesc: []},
         create: true,
         createLinks: null,
         detail: true,
@@ -291,8 +308,8 @@ user:{},
       }
 
       let filter = ""
-      if (this.config.activeFilter.id != null) {
-        filter = "/filter/" + this.config.activeFilter.id
+      if (this.config.userActiveFilter.id != null) {
+        filter = "/filter/" + this.config.userActiveFilter.id
       }
 
       let filterCust = ""
@@ -370,9 +387,11 @@ user:{},
 
         if (_.get(resp.data, "config", false) !== false) {
           // user filters
-          if (_.get(resp.data, "config.filter.list", false) !== false) {
-            this.config.filter = resp.data.config.filter.list
+          if (_.get(resp.data, "config.filter.lists", false) !== false) {
+            this.config.userFilterList = resp.data.config.filter.lists
           }
+
+
           if (_.get(resp.data, "config.filter.active", false) !== false) {
 
             if (_.get(resp.data, "config.filter.active.group", false) !== false) {
@@ -383,9 +402,10 @@ user:{},
             if (_.get(resp.data, "config.filter.active.rowsPerPage", false) !== false) {
               this.pagination.itemsPerPage = resp.data.config.filter.active.rowsPerPage
             }
+            console.log(this.pagination.itemsPerPage)
 
-            if (this.config.activeFilter.id !== resp.data.config.filter.active.id) {
-              this.config.activeFilter.id = resp.data.config.filter.active.id
+            if (this.config.userActiveFilter.id !== resp.data.config.filter.active.id) {
+              this.config.userActiveFilter.id = resp.data.config.filter.active.id
             }
 
             if (_.get(resp.data, "config.filter.active.sort", false) !== false) {
@@ -508,6 +528,15 @@ user:{},
       });
 
     },
+    applyFilter() {
+      // RESET group and sort
+      this.pagination.sortBy = []
+      this.pagination.sortDesc = []
+      this.pagination.groupBy = []
+      this.pagination.groupDesc = []
+      this.pagination.itemsPerPage = 10
+      this.getData(true)
+    },
     /**
      * urlWithPrimaryParam is returning a string with the primary as key and value link - parameter.
      */
@@ -547,6 +576,25 @@ user:{},
     editItem(item) {
       this.$router.push(this.$route.path + "/mode/update" + this.urlWithPrimaryParam(item));
     },
+    updateUserFilterList(value) {
+      this.config.userFilterList = (value === null) ? [] : value;
+      store.commit('navigation/' + NAVIGATION.RELOAD)
+
+      let reload = false;
+      let exists = false;
+      let _this = this;
+      _.forEach(value, function (entry) {
+        if (entry.id === _this.config.userActiveFilter.id) {
+          reload = true;
+          exists = true;
+        }
+      });
+
+      if (typeof this.config.userActiveFilter.id !== "undefined" && (reload || !exists)) {
+        this.applyFilter()
+      }
+
+    }
   }
 }
 
@@ -641,6 +689,91 @@ user:{},
           <v-icon v-if="!config.filter.openQuickFilter" small>mdi-filter</v-icon>
           <v-icon v-else small>mdi-filter-remove</v-icon>
         </v-btn>
+
+        <v-menu v-model="showFilterMenu" v-if="initLoaded&&!this.config.filter.disable&&api.indexOf('/filter/')===-1" offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn small
+                   color="primary"
+                   v-on="on"
+                   :outlined="!config.userActiveFilter.id"
+            >
+              {{ $t('GRID.Filter.Title') }}
+            </v-btn>
+          </template>
+          <v-list>
+            <v-dialog v-model="dialogFilter"
+                      persistent
+                      fullscreen
+                      hide-overlay
+            >
+              <template v-slot:activator="{ on }">
+                <v-list-item dense v-on="on">
+                  <v-list-item-title>
+                    <v-icon dense>mdi-filter-plus</v-icon>
+                    {{ $t('GRID.Filter.AddEdit') }}
+                  </v-list-item-title>
+                </v-list-item>
+              </template>
+              <UserFilter :items-per-page="config.filter.allowedRowsPerPage"
+                          :grid-id="config.id"
+                          :filter-list="config.userFilterList"
+                          :api="api"
+                          v-model="dialogFilter"
+                          @updatefilterlist="updateUserFilterList"
+                          ></UserFilter>
+            </v-dialog>
+            <v-divider></v-divider>
+
+            <v-list-item-group v-model="config.userActiveFilter.id">
+              <v-list-item dense :value="f.id"
+                           v-for="f in config.userFilterList"
+                           @click.native="applyFilter()"
+                           :key="`filter-${f.id}`">
+                <v-list-item-title>
+                  {{ f.name }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <v-menu v-if="initLoaded&&config.export.length>0" offset-y>
           <template v-slot:activator="{ on }">

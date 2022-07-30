@@ -63,7 +63,8 @@ const external = [
     'lodash',
     'vue-i18n',
     'axios',
-    'vue-the-mask'
+    'vue-the-mask',
+    'vuedraggable'
 ];
 
 // UMD/IIFE shared settings: output.globals

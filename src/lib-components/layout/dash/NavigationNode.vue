@@ -76,7 +76,7 @@ export default {
     <template v-slot:activator>
       <v-list-item @click.native.stop v-if="node.Route.Pattern" :to="node.Route.Pattern" class="item-link"></v-list-item>
       <v-list-item-title>
-        {{ $t("NAVIGATION."+node.Title) }}
+        {{ node.Title }}
       </v-list-item-title>
     </template>
 
@@ -96,9 +96,9 @@ export default {
         <v-list-item-subtitle v-if="node.Note">
           <v-chip x-small>{{ node.Note }}</v-chip>
         </v-list-item-subtitle>
-        <v-list-item-title @mouseover="mouseEnter()" v-on="on">{{ $t("NAVIGATION."+node.Title)  }}</v-list-item-title>
+        <v-list-item-title @mouseover="mouseEnter()" v-on="on">{{ node.Title  }}</v-list-item-title>
       </template>
-      <span> {{ $t("NAVIGATION."+node.Title)  }}</span>
+      <span> {{ node.Title }}</span>
     </v-tooltip>
 
     <v-list-item-icon v-if="node.Icon&&depth>=1">
