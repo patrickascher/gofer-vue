@@ -130,8 +130,8 @@ export default {
           sendItem.Filters[index].Value = value.Value.join(";")
         }
       });
-      console.log(sendItem.Fields)
       _.forEach(sendItem.Fields, function (value, index) {
+        delete sendItem.Fields[index].Title;
           sendItem.Fields[index].Pos = sendItem.Fields[index].Pos+1
       });
 
@@ -185,7 +185,7 @@ export default {
         _this.availableFields = []
         _this.item.Fields = []
         this.headersNotHidden.forEach(function (value, index) {
-          _this.availableFields.push({"Key": value.name, "Pos": index})
+          _this.availableFields.push({"Key": value.name,"Title":value.title, "Pos": index})
         });
       } else {
         _this.availableFields = []
@@ -330,34 +330,34 @@ export default {
     },
     operatorByType(el) {
       if (this.isDateField(el)) {
-        return [{value: 'TODAY', text: 'Today'},
-          {value: 'YESTERDAY', text: 'Yesterday'},
-          {value: 'WEEK', text: 'This week'},
-          {value: 'LWEEK', text: 'Last week'},
-          {value: 'MONTH', text: 'This month'},
-          {value: 'LMONTH', text: 'Last month'},
-          {value: 'YEAR', text: 'This year'},
-          {value: 'LYEAR', text: 'Last year'},
-          {value: '=', text: 'Equal'},
-          {value: '!=', text: 'Not equal'},
-          {value: '>=', text: 'Greater than'},
-          {value: '<=', text: 'Lesser than'},
-          {value: 'NULL', text: 'Null'},
-          {value: 'NOTNULL', text: 'Not null'},
+        return [{value: 'TODAY', text: this.$t('GRID.Filter.Today')},
+          {value: 'YESTERDAY', text: this.$t('GRID.Filter.Yesterday')},
+          {value: 'WEEK', text: this.$t('GRID.Filter.ThisWeek')},
+          {value: 'LWEEK', text: this.$t('GRID.Filter.LastWeek')},
+          {value: 'MONTH', text: this.$t('GRID.Filter.ThisMonth')},
+          {value: 'LMONTH', text: this.$t('GRID.Filter.LastMonth')},
+          {value: 'YEAR', text: this.$t('GRID.Filter.ThisYear')},
+          {value: 'LYEAR', text: this.$t('GRID.Filter.LastYear')},
+          {value: '=', text: this.$t('GRID.Filter.Equal')},
+          {value: '!=', text: this.$t('GRID.Filter.NotEqual')},
+          {value: '>=', text: this.$t('GRID.Filter.GreaterThan')},
+          {value: '<=', text: this.$t('GRID.Filter.LesserThan')},
+          {value: 'NULL', text: this.$t('GRID.Filter.Null')},
+          {value: 'NOTNULL', text: this.$t('GRID.Filter.NotNull')},
         ]
       }
       return [
-        {value: '=', text: 'Equal'},
-        {value: '!=', text: 'Not equal'},
-        {value: '>=', text: 'Greater than'},
-        {value: '<=', text: 'Less than'},
-        {value: 'IN', text: 'In'},
-        {value: 'NOTIN', text: 'Not in'},
-        {value: 'LIKE', text: 'Like'},
-        {value: 'RLIKE', text: 'RLike'},
-        {value: 'LLIKE', text: 'LLike'},
-        {value: 'NULL', text: 'Null'},
-        {value: 'NOTNULL', text: 'Not null'}]
+        {value: '=', text: this.$t('GRID.Filter.Equal')},
+        {value: '!=', text: this.$t('GRID.Filter.NotEqual')},
+        {value: '>=', text: this.$t('GRID.Filter.GreaterThan')},
+        {value: '<=', text: this.$t('GRID.Filter.LesserThan')},
+        {value: 'IN', text: this.$t('GRID.Filter.In')},
+        {value: 'NOTIN', text: this.$t('GRID.Filter.NotIn')},
+        {value: 'LIKE', text: this.$t('GRID.Filter.Like')},
+        {value: 'RLIKE', text: this.$t('GRID.Filter.RLike')},
+        {value: 'LLIKE', text: this.$t('GRID.Filter.LLike')},
+        {value: 'NULL', text: this.$t('GRID.Filter.Null')},
+        {value: 'NOTNULL', text: this.$t('GRID.Filter.NotNull')}]
     },
     isDateField(el) {
       let date = false;
@@ -528,7 +528,7 @@ export default {
             <v-col v-if="groupAllowed">
               <v-select :items="getFields('groupable')"
                         item-value="name"
-                        item-text="title"
+                        :item-text="item => $t(item.title)"
                         :label="$t('GRID.Filter.Group')"
                         clearable
                         v-model="item.GroupBy"></v-select>
@@ -563,7 +563,7 @@ export default {
                       <td>
                         <v-select :items="getFields('sortable',index)"
                                   item-value="name"
-                                  item-text="title"
+                                  :item-text="item => $t(item.title)"
                                   label="Field"
                                   :rules="[v => !!v || $t('COMMON.Required')]"
                                   required
@@ -611,7 +611,7 @@ export default {
                     <td>
                       <v-select :items="getFields('filterable',index)"
                                 item-value="name"
-                                item-text="title"
+                                :item-text="item => $t(item.title)"
                                 label="Field"
                                 :rules="[v => !!v || $t('COMMON.Required')]"
                                 required
@@ -697,7 +697,6 @@ export default {
               <v-toolbar class="elevation-1" color="white">
                 <v-toolbar-title>{{ $t('GRID.Filter.Fields') }}:</v-toolbar-title>
               </v-toolbar>
-
               <v-row
                   no-gutters
                   style="flex-wrap: nowrap;"
@@ -720,7 +719,7 @@ export default {
                                      v-for="(item,index) in item.Fields">
                           <v-list-item-content>
                             <v-list-item-title class="d-flex flex-row ">
-                              <v-chip small class="d-flex-column">{{ item.Key }}</v-chip>
+                              <v-chip small class="d-flex-column">{{ $t(item.Title) }}</v-chip>
                               <v-spacer/>
                               <v-icon class="d-flex-column justify-end " small @click="deleteField(index)">mdi-delete
                               </v-icon>
@@ -748,7 +747,7 @@ export default {
                           :key="af.Key"
                           @click="addField(index)"
                       >
-                        {{ af.Key }}
+                        {{$t(af.Title)}}
                       </v-chip>
                     </v-chip-group>
                   </v-card>

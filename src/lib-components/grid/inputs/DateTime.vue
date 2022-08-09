@@ -236,7 +236,7 @@ export default {
   <v-layout v-show="!isHidden()" row wrap>
 
       <v-row no-gutters>
-        <v-col :md="isType(FieldType.DateTime)?6:12">
+        <v-col :md="isType(FieldType.DateTime)&&!fromTo?6:12">
 
       <v-menu v-if="isType(FieldType.Date) ||isType(FieldType.DateTime)"
               :close-on-content-click="false"
@@ -265,7 +265,7 @@ export default {
       </v-menu>
 
         </v-col>
-        <v-col v-if="isType(FieldType.DateTime)" md="6">
+        <v-col v-if="isType(FieldType.DateTime)  &&  !fromTo" md="6">
 
     <!-- Time, DateTime -->
     <v-tooltip bottom>
@@ -293,7 +293,7 @@ export default {
 
 
     <v-row  v-if="fromTo" no-gutters>
-      <v-col :md="isType(FieldType.DateTime)?6:12">
+      <v-col :md="isType(FieldType.DateTime)&&!fromTo?6:12">
 
       <v-menu v-if="isType(FieldType.Date) ||isType(FieldType.DateTime)"
               :close-on-content-click="false"
@@ -321,7 +321,7 @@ export default {
         <v-date-picker :min="minTo" v-model="datepickerValueTo" @input="displayMenuTo = false"></v-date-picker>
       </v-menu>
       </v-col>
-      <v-col v-if="isType(FieldType.DateTime)" md="6">
+      <v-col v-if="isType(FieldType.DateTime) && !fromTo" md="6">
 
     <!-- Time, DateTime -->
     <v-tooltip bottom>

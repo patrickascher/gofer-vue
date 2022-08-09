@@ -402,7 +402,6 @@ user:{},
             if (_.get(resp.data, "config.filter.active.rowsPerPage", false) !== false) {
               this.pagination.itemsPerPage = resp.data.config.filter.active.rowsPerPage
             }
-            console.log(this.pagination.itemsPerPage)
 
             if (this.config.userActiveFilter.id !== resp.data.config.filter.active.id) {
               this.config.userActiveFilter.id = resp.data.config.filter.active.id
@@ -825,7 +824,7 @@ user:{},
                 v-slot:body.prepend="{ headers }">
         <tr>
           <td class="px-2" style="vertical-align: top;" v-for="header in headers">
-            <v-text-field @change="addQuickfilter" :placeholder="$t(header.title)" v-if="header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" single-line dense
+            <v-text-field @change="addQuickfilter"  v-if="header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" single-line dense
                           v-model="filter.values[header.name]"></v-text-field>
            <input-date-time class="ma-2" dense single-line :from-to="true" v-if="header.filterable&&header.type==='Date'||header.filterable&&header.type==='DateTime'" @input="addQuickfilter" :field="header" v-model="filter.values[header.name]"></input-date-time>
           </td>
