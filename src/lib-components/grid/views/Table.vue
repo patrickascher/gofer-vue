@@ -435,10 +435,14 @@ user:{},
             this.headers[i].text = this.headers[i].title
             this.headers[i].value = this.headers[i].name
 
+            //width
+            if (_.get(this.headers[i], "options.width", false )!==false){
+              this.headers[i].width=this.headers[i].options["width"]
+            }
+
             if (!("sortable" in this.headers[i])) {
               this.headers[i].sortable = false
             }
-
 
             if (("filterable" in this.headers[i])) {
               if (typeof this.filter.values[this.headers[i].name] === "undefined") {
