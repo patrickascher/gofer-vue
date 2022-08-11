@@ -9,7 +9,7 @@ import InputManyToMany from '@/lib-components/grid/inputs/ManyToMany'
 import {FieldComponent} from '@/lib-components/grid/common'
 import {viewOptions} from '@/lib-components/grid/mixins/helper'
 import {store} from '@/lib-components/store'
-import {ALERT, USER} from '@/lib-components/store/modules/types'
+import {ALERT, NAVIGATION, USER} from '@/lib-components/store/modules/types'
 import {isEqual,get} from "lodash";
 import {http} from '@/lib-components/services/http'
 
@@ -116,6 +116,7 @@ export default {
           store.commit('alert/' + ALERT.SUCCESS, this.$t('COMMON.PasswordSaved'));
         }else{
           store.commit('alert/' + ALERT.SUCCESS, this.$t('COMMON.ProfileSaved'));
+          store.commit('navigation/' + NAVIGATION.RELOAD)
         }
         this.show = false;
         this.item.OldPassword=null;

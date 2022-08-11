@@ -21,7 +21,7 @@ import {
 } from 'vuetify/lib'
 import _ from 'lodash'
 import {userService} from '../services/user'
-import {ALERT, USER} from '../store/modules/types'
+import {ALERT, NAVIGATION, USER} from '../store/modules/types'
 import {store} from '../store'
 import {i18nService} from '../services/i18n'
 import Navigation from '@/lib-components/layout/dash/Navigation'
@@ -86,6 +86,7 @@ export default {
   methods: {
     changeLang(lang) {
       i18nService.loadLanguageAsync(lang, false)
+      store.commit('navigation/' + NAVIGATION.RELOAD)
     },
     updateMenu(variable) {
       this.userMenu = variable

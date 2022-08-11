@@ -192,27 +192,30 @@ export default {
         // add all header fields to a temp array to check if the fields are still ok.
         let newFields = []
         for (let head of this.headersNotHidden) {
-          newFields.push(head.name);
+          newFields.push(head);
         }
 
         let i = 0
         _this.item.Fields.forEach(function (value, index) {
           let exist = false
           _.forEach(newFields, function (headvalue, headindex) {
-            if (headvalue === value.Key) {
+            if(typeof headvalue === "undefined"){
+              return;
+            }
+            if (headvalue.name === value.Key) {
               exist = true
               newFields.splice(headindex, 1);
             }
           });
-          // delete field if its not existing anymore or if its allowed
+          // delete field if it's not existing anymore or if its allowed
           if (exist === false) {
             _this.item.Fields.splice(index, 1)
           }
           i++
         });
 
-        newFields.forEach(function (value) {
-          _this.availableFields.push({"Key": value, "Pos": i++})
+        newFields.forEach(function (value,index) {
+          _this.availableFields.push({"Key": value.name,"Title":value.title, "Pos": i++})
         });
       }
     },
@@ -254,6 +257,15 @@ export default {
         if (this.item.Sorting === null) {
           this.item.Sorting = []
         }
+        let _this = this
+            _.forEach(this.item.Fields, function (value, index) {
+              for (let head of _this.headersNotHidden) {
+                if (head.name === value.Key){
+                  _this.item.Fields[index].Title = head.title;
+                }
+              }
+            });
+
         this.setFieldsValue()
 
         this.snapshot = JSON.parse(JSON.stringify(this.item));
