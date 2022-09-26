@@ -143,11 +143,14 @@ function initUser() {
         if (localStorage.user != null) {
             let userdata = JSON.parse(localStorage.user)
             store.commit("user/" + USER.SET_DATE, userdata);
-            i18nService.loadLanguageAsync(userdata.Options.Language,false)
+            if (_.get(userdata.Options, "Language", false)!==false) {
+                i18nService.loadLanguageAsync(userdata.Options.Language,false)
+            }
             return userdata
         }
         return null
     } catch (err) {
+        console.log(err)
         removeUserStores();
         return null
     }

@@ -187,14 +187,14 @@ user:{},
         return ""
       }
       if (h.type === "Date"){
-        if(this.user.Options.DateFormat==="YYYY-MM-DD"){
+        if(_.get(this.user.Options, "DateFormat", false) !== false && this.user.Options.DateFormat==="YYYY-MM-DD"){
           return v.substring(0, 10)
         }else{
           return v.substring(8,10)+"."+v.substring(5,7)+"."+v.substring(0,4)
         }
 
       }else if (h.type==="DateTime"){
-        if(this.user.Options.DateFormat==="YYYY-MM-DD"){
+        if(_.get(this.user.Options, "DateFormat", false) !== false && this.user.Options.DateFormat==="YYYY-MM-DD"){
           return v.substring(0,4)+"-"+v.substring(5,7)+"-"+v.substring(8,10)+" "+v.substring(11,13)+":"+v.substring(14,16)
         }else{
           return v.substring(8,10)+"."+v.substring(5,7)+"."+v.substring(0,4)+" "+v.substring(11,13)+":"+v.substring(14,16)
