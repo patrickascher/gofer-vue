@@ -9,10 +9,11 @@ export const MODE_CREATE = "create";
  */
 export const FieldComponent = function (field) {
 
-    if (typeof field.view !== "undefined") {
+    if (_.get(field, "view", false) !== false && typeof field.view !== "undefined") {
         return field.view;
     }
 
+    if(_.get(field, "type", false) !== false&&_.get(field, "name", false) !== false){
     switch (field.type) {
         case FieldType.File:
             return "input-file"
@@ -42,5 +43,6 @@ export const FieldComponent = function (field) {
         default:
             console.error("The component \"" + field.type + "\" is not implemented (" + field.name + ")");
             return "";
+    }
     }
 };

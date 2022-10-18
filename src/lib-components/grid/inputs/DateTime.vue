@@ -250,6 +250,7 @@ export default {
           <v-text-field
               :disabled="isReadOnly()"
               v-model="datepickerValueFrom"
+              :label="getFilterDateLabel('DateFrom')"
               :placeholder="getFilterDateLabel('DateFrom')"
               prepend-icon="mdi-calendar"
               readonly

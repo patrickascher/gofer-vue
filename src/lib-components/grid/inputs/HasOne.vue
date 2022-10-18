@@ -112,7 +112,7 @@ export default {
 
   <v-flex v-show="!isHidden()" class="mb-3" v-if="isType(FieldType.HasMany) || isType(FieldType.HasOne)">
     <v-toolbar class="elevation-1" color="white">
-      <v-toolbar-title>{{ field.title }} {{ field.description }}
+      <v-toolbar-title>{{ getLabel }} {{ field.description }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-if="!isReadOnly()&&isType(FieldType.HasMany)&&!addDisbaled&&(!this.maxFour||(this.maxFour&&fieldValue.length<4))" icon

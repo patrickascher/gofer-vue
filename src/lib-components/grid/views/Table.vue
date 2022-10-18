@@ -186,6 +186,15 @@ user:{},
       if (v===null){
         return ""
       }
+      if (h.type === "Bool"){
+        if (v===true){
+          return this.$t("COMMON.BOOL.True")
+        }
+        if(v===false){
+          return this.$t("COMMON.BOOL.True")
+        }
+        console.log(v,h)
+      }
       if (h.type === "Date"){
         if(_.get(this.user.Options, "DateFormat", false) !== false && this.user.Options.DateFormat==="YYYY-MM-DD"){
           return v.substring(0, 10)
