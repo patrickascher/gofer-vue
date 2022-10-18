@@ -219,6 +219,9 @@ export default {
 
         this.snapshotItem = JSON.parse(JSON.stringify(this.item)); // Object.assign({}, this.item); has no deep copy
         this.loading = false;
+
+
+
       }).catch((error) => {
         this.loading = false;
         store.commit('alert/' + ALERT.ERROR, error);
@@ -313,12 +316,16 @@ export default {
 
       <!-- Form Data -->
       <v-form ref="form" v-if="!itemNotFound" v-model="valid">
-        <div v-for="(field) in headersNotHidden" :key="field.position+field.name">
+
+<v-row>
+        <v-col cols="4" v-for="(field) in headersNotHidden" :key="field.position+field.name">
+
           <component @changes="checkChanges" :api="api" :snapshot="snapshotItem" :options="viewOptions(field)"
                      v-model="item[field.name]"
                      :field="field"
                      :is="getFieldComponent(field)"></component>
-        </div>
+          </v-col>
+</v-row>
       </v-form>
 
 

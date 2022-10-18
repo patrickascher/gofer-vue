@@ -116,6 +116,9 @@ export var validation = {
 };
 
 export const required = function (v, msg) {
+    if (v===0){
+        return true
+    }
     return !!v || msg;
 };
 
