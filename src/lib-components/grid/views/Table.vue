@@ -193,7 +193,6 @@ user:{},
         if(v===false){
           return this.$t("COMMON.BOOL.True")
         }
-        console.log(v,h)
       }
       if (h.type === "Date"){
         if(_.get(this.user.Options, "DateFormat", false) !== false && this.user.Options.DateFormat==="YYYY-MM-DD"){
@@ -792,7 +791,7 @@ user:{},
             <v-btn small
                    color="primary"
                    outlined
-                   class="mr-2" export.length
+                   class="ml-2" export.length
                    v-on="on"
             >
               {{ $t('COMMON.Export') }}

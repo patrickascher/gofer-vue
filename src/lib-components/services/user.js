@@ -150,7 +150,6 @@ function initUser() {
         }
         return null
     } catch (err) {
-        console.log(err)
         removeUserStores();
         return null
     }
