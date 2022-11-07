@@ -185,7 +185,9 @@ export default {
         _this.availableFields = []
         _this.item.Fields = []
         this.headersNotHidden.forEach(function (value, index) {
-          _this.availableFields.push({"Key": value.name,"Title":value.title, "Pos": index})
+          if (value.title !=="{{Remove}}"){
+            _this.availableFields.push({"Key": value.name,"Title":value.title, "Pos": index})
+          }
         });
       } else {
         _this.availableFields = []

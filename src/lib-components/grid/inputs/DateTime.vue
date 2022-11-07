@@ -17,6 +17,7 @@ export default {
   mixins: [validation],
   props:[
     "fromTo",
+      "isFilter",
   ],
   data() {
     return {
@@ -80,8 +81,11 @@ export default {
           return
         }
 
-        if (this.fieldValue === null) {
+
+        if (this.fieldValue === null && !this.isFilter) {
           originalValue = "0000-00-00T00:00:00Z"
+        }else{
+          originalValue = "0000-00-00"
         }
         // if its only a date
         if (originalValue.indexOf('T')!==-1){
@@ -257,7 +261,7 @@ export default {
               :rules="rules"
               v-on="on"
               :dense="dense"
-              :clearable="fromTo"
+              :clearable="fromTo||clearable"
               :filled="filled"
           ></v-text-field>
         </template>
@@ -315,7 +319,7 @@ export default {
               v-on="on"
               :dense="dense"
               :filled="filled"
-              :clearable="fromTo"
+              :clearable="fromTo||clearable"
           ></v-text-field>
         </template>
 

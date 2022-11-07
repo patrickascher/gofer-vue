@@ -191,7 +191,7 @@ user:{},
           return this.$t("COMMON.BOOL.True")
         }
         if(v===false){
-          return this.$t("COMMON.BOOL.True")
+          return this.$t("COMMON.BOOL.False")
         }
       }
       if (h.type === "Date"){
@@ -221,7 +221,8 @@ user:{},
       this.filter.values = {}
       this.addQuickfilter()
     },
-    getValue(item, decorator, separator) {
+    getValue(item,field, decorator, separator) {
+      item = item[field]
 
       if (decorator === "") {
         return item
@@ -233,6 +234,7 @@ user:{},
       let reg = /{{.*?}}/g;
       let matches = decorator.match(reg);
       let rv = []
+
 
       _.forEach(item, function (value) {
         let decor = decorator
@@ -492,16 +494,20 @@ user:{},
               let _this = this;
               // add no escaping
               let separator = "";
+              let _field = head.name;
 
               if (_.get(_this.headers[i], "options.decorator.1", false) !== false) {
                 _this.headers[i].options['noEscaping'] = [true]
                 separator = _this.headers[i].options.decorator[1]
               }
+              if (_.get(_this.headers[i], "options.decorator.2", false) !== false) {
+                _field = _this.headers[i].options.decorator[2]
+              }
               _.forEach(resp.data.data, function (value, index) {
                 if (resp.data.data[index][head.name] === null) {
                   return;
                 }
-                resp.data.data[index][head.name] = _this.getValue(resp.data.data[index][head.name], _this.headers[i].options.decorator[0], separator)
+                resp.data.data[index][head.name] = _this.getValue(resp.data.data[index],_field, _this.headers[i].options.decorator[0], separator)
               });
             }
 
