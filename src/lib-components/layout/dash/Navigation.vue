@@ -21,6 +21,9 @@ export default {
     VCard, VNavigationDrawer, VList, VSkeletonLoader, VListItem, VListItemTitle
   },
   computed: {
+    sorted(){
+      return this.items ? _.sortBy(this.items, "translated") : [];
+    },
     navMini: {
       get: function () {
         return this.mini;
@@ -30,11 +33,28 @@ export default {
       }
     }
   },
+
+  methods: {
+    sortedT: function(item){
+      return item ? _.sortBy(item, "translated") : [];
+    },
+    createTranslatedNames: function () {
+      let _this = this
+      this.items.forEach((head, index) => {
+        _this.items[index]["translated"] = _this.$t(head.Title)
+        _this.items[index]["Children"].forEach((chead, cindex) => {
+            _this.items[index]["Children"][cindex]["translated"] = _this.$t(chead.Title)
+          });
+        _this.items[index]["Children"] = _this.sortedT(_this.items[index]["Children"])
+      });
+    },
+  },
   created: function () {
     userService.navigation().then((resp) => {
       if (typeof resp !== "undefined") {
         this.items = resp.data.navigation;
         store.commit("languages/" + LANGUAGES.SET_LANGUAGES, resp.data.languages);
+        this.createTranslatedNames()
       }
       this.loading = false;
     }).catch((error) => {
@@ -46,6 +66,7 @@ export default {
         userService.navigation().then((resp) => {
           if (typeof resp !== "undefined") {
             this.items = resp.data.navigation;
+            this.createTranslatedNames()
           }
           this.loading = false;
         }).catch((error) => {
@@ -71,7 +92,7 @@ export default {
         app
     >
       <v-list dense>
-        <nav-node v-for="item in items" :key="item.Id" :depth="0" :node="item"></nav-node>
+        <nav-node v-for="item in sorted" :key="item.Id" :depth="0" :node="item"></nav-node>
       </v-list>
       <v-skeleton-loader
           v-if="loading"

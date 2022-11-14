@@ -30,7 +30,13 @@ export default {
       if (_.get(this, '$el.children', false) !== false) {
         this.showTooltip = this.$el.children[1].offsetWidth < this.$el.children[1].scrollWidth
       }
-    }
+    },
+    createTranslatedNames: function () {
+        this.node["translated"] = this.$t(this.node.Title)
+    },
+  },
+  created: function () {
+    this.createTranslatedNames()
   },
   computed: {
 
