@@ -38,6 +38,10 @@ function loadLanguageAsync(lang, force) {
         lang = i18n.fallbackLocale
     }
 
+    //needed for navigation reload
+    // otherwise in some cases still the old lang will be loaded.
+    setI18nLanguage(lang)
+
     // If the language was already loaded
     if (loadedLanguages.includes(lang) && !force) {
         return Promise.resolve(setI18nLanguage(lang))

@@ -11,7 +11,7 @@ export default {
       loading: true,
       hrefPrivacy:this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF'),
       hrefImpress:this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF'),
-      items: Object,
+      items: {},
       drawer: true,
     }
   },
@@ -21,8 +21,13 @@ export default {
     VCard, VNavigationDrawer, VList, VSkeletonLoader, VListItem, VListItemTitle
   },
   computed: {
-    sorted(){
-      return this.items ? _.sortBy(this.items, "translated") : [];
+    sorted: {
+      get: function () {
+        return this.items ? _.sortBy(this.items, "translated") : [];
+      },
+      set: function (newValue) {
+        this.items = newValue
+      }
     },
     navMini: {
       get: function () {
@@ -33,7 +38,6 @@ export default {
       }
     }
   },
-
   methods: {
     sortedT: function(item){
       return item ? _.sortBy(item, "translated") : [];
@@ -52,7 +56,7 @@ export default {
   created: function () {
     userService.navigation().then((resp) => {
       if (typeof resp !== "undefined") {
-        this.items = resp.data.navigation;
+        this.sorted = resp.data.navigation;
         store.commit("languages/" + LANGUAGES.SET_LANGUAGES, resp.data.languages);
         this.createTranslatedNames()
       }
@@ -65,7 +69,7 @@ export default {
       if (store.state.navigation.reload === true) {
         userService.navigation().then((resp) => {
           if (typeof resp !== "undefined") {
-            this.items = resp.data.navigation;
+            this.sorted = resp.data.navigation;
             this.createTranslatedNames()
           }
           this.loading = false;
