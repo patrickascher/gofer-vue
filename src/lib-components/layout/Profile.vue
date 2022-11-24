@@ -29,6 +29,7 @@ import {VCard
   ,VToolbarTitle
   ,VSpacer} from 'vuetify/lib'
 import {userService} from "@/lib-components/services/user";
+import {Config} from "@/lib-components";
 
 
 export default {
@@ -76,6 +77,10 @@ export default {
 
   methods: {
     pwRules(field, val) {
+
+      if (this.item['Password']!=null && this.item['Password'].length<6) {
+        return ["Min. 6 characters"]
+      }
 
       if (((this.item['OldPassword'] != null && this.item['OldPassword'] !== "") ||
           (this.item['Password'] != null && this.item['Password'] !== "") ||
@@ -125,7 +130,7 @@ export default {
 
         if (resp.data.claim) {
           // Add token to local storage
-          localStorage.user = JSON.stringify(resp.data.claim);
+          localStorage.setItem(Config.get('webserver.app.name')+'_user',JSON.stringify(resp.data.claim));
           userService.initUser();
         }
 

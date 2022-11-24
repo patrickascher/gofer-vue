@@ -2,6 +2,7 @@ import {USER} from "./../store/modules/types";
 import {http} from './http'
 import {store} from "./../store"
 import {i18nService} from "@/lib-components/services/i18n";
+import {Config} from "@/lib-components";
 
 export const userService = {
     login,
@@ -37,11 +38,10 @@ function redirectLogin() {
     this.$router.push(UrlLogin)
 }
 
-// login returns an Promise if the login was successful or failed
+// login returns a Promise if the login was successful or failed
 // the service is taking care of the api call, local storage and the store in vuex.
 // on success it returns the decoded jwt and on fail it returns the error
 function login(credentials, provider) {
-
     return new Promise(
         // The executor function is called with the ability to resolve or
         // reject the promise
@@ -60,7 +60,7 @@ function login(credentials, provider) {
                 }
 
                 // Add token to local storage
-                localStorage.user = JSON.stringify(response.data.claim);
+                localStorage.setItem(localStorageName(), JSON.stringify(response.data.claim));
                 let user = initUser();
 
                 /// everything was ok
@@ -138,10 +138,15 @@ function getUser() {
     return store.getters['user/' + USER.GET_DATA]
 }
 
+function localStorageName(){
+    return Config.get('webserver.app.name')+'_user'
+}
+
 function initUser() {
     try {
-        if (localStorage.user != null) {
-            let userdata = JSON.parse(localStorage.user)
+
+        if (localStorage.getItem(localStorageName()) != null) {
+            let userdata = JSON.parse(localStorage.getItem(localStorageName()))
             store.commit("user/" + USER.SET_DATE, userdata);
             if (_.get(userdata.Options, "Language", false)!==false) {
                 i18nService.loadLanguageAsync(userdata.Options.Language,false)
@@ -156,8 +161,8 @@ function initUser() {
 }
 
 function removeUserStores() {
-    if (localStorage.user != null) {
-        localStorage.removeItem('user');
+    if (localStorage.getItem(localStorageName()) != null) {
+        localStorage.removeItem(localStorageName());
     }
     store.commit("user/" + USER.UNSET_DATA);
 }

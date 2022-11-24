@@ -46,9 +46,11 @@ export default {
       let _this = this
       this.items.forEach((head, index) => {
         _this.items[index]["translated"] = _this.$t(head.Title)
-        _this.items[index]["Children"].forEach((chead, cindex) => {
+        if(_this.items[index]["Children"]!==null){
+          _this.items[index]["Children"].forEach((chead, cindex) => {
             _this.items[index]["Children"][cindex]["translated"] = _this.$t(chead.Title)
           });
+        }
         _this.items[index]["Children"] = _this.sortedT(_this.items[index]["Children"])
       });
     },
