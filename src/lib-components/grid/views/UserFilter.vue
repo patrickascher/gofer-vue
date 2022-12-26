@@ -734,7 +734,7 @@ export default {
                                      v-for="(item,index) in item.Fields">
                           <v-list-item-content>
                             <v-list-item-title class="d-flex flex-row ">
-                              <v-chip small class="d-flex-column">{{ $t(item.Title) }} {{item.Title}} {{item.Pos}}</v-chip>
+                              <v-chip small class="d-flex-column">{{ $t(item.Title) }}</v-chip>
                               <v-spacer/>
                               <v-icon class="d-flex-column justify-end " small @click="deleteField(index)">mdi-delete
                               </v-icon>
