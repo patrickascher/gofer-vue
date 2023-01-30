@@ -490,39 +490,47 @@ export default {
           </div>
 
           <div v-if="!loading">
-            <v-simple-table>
-              <template v-slot:default>
+                <v-expansion-panels>
+                  <v-expansion-panel
+                      v-for="group in groupItems"
+                      :key="group.Group"
+                      v-if="group.Items.length>0"
+                  >
+                    <v-expansion-panel-header v-if="group.Group!==''">
+                      {{ group.Group.slice(0, -1) }}
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-header v-if="group.Group==''">
+                      General
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+
+                      <v-simple-table>
+                        <template v-slot:default>
                 <thead>
-                <tr>
-                  <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation.ID') }}</th>
-                  <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation.Translation') }}</th>
-                </tr>
+                  <tr>
+                    <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation.ID') }}</th>
+                    <th class="text-left">{{ $t('CONTROLLER.locale.Controller.Translation.Translation') }}</th>
+                  </tr>
                 </thead>
                 <tbody>
-
-                <slot v-for="group in groupItems">
-
-                  <tr style="background-color:#eee" v-if="group.Group!==''">
-                    <td colspan="2"><h4>{{ group.Group.slice(0, -1) }}</h4></td>
-                  </tr>
-
-                  <tr v-for="index in group.Items">
-                    <td>{{ items[index].MessageID.replace(groups[activeTab] + separator, "").replace(group.Group, "") }}<br/><span
-                        class="text--secondary"
-                        style="font-size: 12px;">{{ getRawByMessageID(items[index].MessageID).Description }}</span>
-                    </td>
-                    <td>
-                      <v-text-field @keyup="hasChanged(index)"
-                                    :label="getRawByMessageID(items[index].MessageID).Other"
-                                    v-model="items[index].Other">
-                      </v-text-field>
-                    </td>
-                  </tr>
-                </slot>
-
+                <tr v-for="index in group.Items">
+                  <td>{{ items[index].MessageID.replace(groups[activeTab] + separator, "").replace(group.Group, "") }}<br/><span
+                      class="text--secondary"
+                      style="font-size: 12px;">{{ getRawByMessageID(items[index].MessageID).Description }}</span>
+                  </td>
+                  <td>
+                    <v-text-field @keyup="hasChanged(index)"
+                                  :label="getRawByMessageID(items[index].MessageID).Other"
+                                  v-model="items[index].Other">
+                    </v-text-field>
+                  </td>
+                </tr>
                 </tbody>
-              </template>
-            </v-simple-table>
+              </template></v-simple-table>
+
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
 
             <v-row class="mt-5 r-3 ml-3" justify="space-between">
 
