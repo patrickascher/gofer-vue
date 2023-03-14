@@ -73,6 +73,7 @@ export default {
     gridId: String,
     value: Boolean,
     api: String,
+    loadID:String,
     filterList: Array,
     filterActive: Number,
     itemsPerPage: Array,
@@ -117,6 +118,10 @@ export default {
       if (val === true && this.selectedFilter !== this.filterActive && typeof this.filterActive !== "undefined") {
         this.selectedFilter = this.filterActive;
         this.getFilter(this.selectedFilter);
+      }
+      if(this.loadID!==null){
+        this.getFilter(this.loadID);
+        this.selectedFilter=this.loadID;
       }
     },
 
@@ -174,6 +179,7 @@ export default {
     },
     close() {
       this.show = false;
+      this.$emit('updatefilterlistClose')
       this.resetItem()
     },
     setFieldsValue() {
@@ -385,7 +391,7 @@ export default {
     },
   },
   created() {
-    this.getData()
+      this.getData()
   },
   computed: {
     filterAllowed() {
@@ -489,6 +495,7 @@ export default {
         <v-select class="mt-3" :items="this.filterList"
                   item-text="name"
                   item-value="id"
+                  v-show="!loadID"
                   :label="$t('GRID.Filter.Edit')"
                   v-model="selectedFilter"
                   :loading="loading"
@@ -497,7 +504,7 @@ export default {
                   clearable></v-select>
       </v-toolbar-items>
 
-      <v-toolbar-items v-if="selectedFilter">
+      <v-toolbar-items v-if="selectedFilter&&!loadID">
         <v-btn
             class="mx-4"
             icon

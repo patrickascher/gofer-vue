@@ -61,6 +61,7 @@ export default {
       vuetifyError: false,
       showFilterMenu:false,
       dialogFilter:false,
+      dialogFilterId:null,
       primaryKey: [],
       headers: [],
 user:{},
@@ -210,6 +211,11 @@ user:{},
       }
 
       return v
+    },
+    openSavedFilter(id){
+      this.dialogFilterId=id
+      this.showFilterMenu=true;
+      this.dialogFilter=true;
     },
     openQuickfilterFn() {
       this.config.filter.openQuickFilter = !this.config.filter.openQuickFilter
@@ -593,6 +599,9 @@ user:{},
     editItem(item) {
       this.$router.push(this.$route.path + "/mode/update" + this.urlWithPrimaryParam(item));
     },
+    updatefilterlistClose(){
+      this.showFilterMenu=false;
+    },
     updateUserFilterList(value) {
       this.config.userFilterList = (value === null) ? [] : value;
       store.commit('navigation/' + NAVIGATION.RELOAD)
@@ -630,7 +639,9 @@ user:{},
             class="mt-4"
             type="text"
         ></v-skeleton-loader>
-        <h1 v-if="initLoaded">{{ $t(config.title) }}</h1>
+        <h1 v-if="initLoaded">{{ $t(config.title) }}
+          <v-icon v-if="api.indexOf('/filter/')!==-1" @click="openSavedFilter(api.slice(api.indexOf('/filter/')+8,api.indexOf('/filter/')+8+api.slice(api.indexOf('/filter/')+8).indexOf('/')))">mdi-pencil</v-icon>
+        </h1>
 
         <v-progress-linear
             v-if="!initLoaded"
@@ -707,9 +718,11 @@ user:{},
           <v-icon v-else small>mdi-filter-remove</v-icon>
         </v-btn>
 
-        <v-menu v-model="showFilterMenu" v-if="initLoaded&&!this.config.filter.disable&&api.indexOf('/filter/')===-1" offset-y>
+        <v-menu v-model="showFilterMenu" v-show="initLoaded&&!config.filter.disable&&api.indexOf('/filter/')===-1" offset-y>
           <template v-slot:activator="{ on }">
-            <v-btn small
+            <v-btn
+                v-show="initLoaded&&!config.filter.disable&&api.indexOf('/filter/')===-1"
+                small
                    color="primary"
                    v-on="on"
                    :outlined="!config.userActiveFilter.id"
@@ -735,8 +748,10 @@ user:{},
                           :grid-id="config.id"
                           :filter-list="config.userFilterList"
                           :api="api"
+                          :loadID="dialogFilterId"
                           v-model="dialogFilter"
                           @updatefilterlist="updateUserFilterList"
+                          @updatefilterlistClose="updatefilterlistClose"
                           ></UserFilter>
             </v-dialog>
             <v-divider></v-divider>
@@ -837,6 +852,14 @@ user:{},
         v-show="initLoaded"
         multi-sort
     >
+      <template v-slot:group.header="{headers,group,groupBy, isOpen, toggle}">
+        <th :colspan="headers.length">
+          <v-icon @click="toggle"
+          >{{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+          </v-icon>
+          {{groupBy[0]}}: {{group}}
+        </th>
+      </template>
 
       <template v-if="!config.filter.disable&&!config.filter.disableQuickFilter&&config.filter.openQuickFilter"
                 v-slot:body.prepend="{ headers }">

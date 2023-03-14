@@ -97,14 +97,11 @@ export default {
       <v-icon v-text="node.Icon"></v-icon>
     </v-list-item-icon>
 
-    <v-tooltip right :disabled="!showTooltip">
+    <v-tooltip right :disabled="!node.Note">
       <template v-slot:activator="{ on }">
-        <v-list-item-subtitle v-if="node.Note">
-          <v-chip x-small>{{ node.Note }}</v-chip>
-        </v-list-item-subtitle>
-        <v-list-item-title @mouseover="mouseEnter()" v-on="on">{{ node.Title  }}</v-list-item-title>
+        <v-list-item-title v-on="on">{{ node.Title  }}</v-list-item-title>
       </template>
-      <span> {{ node.Title }}</span>
+      <span>{{$t(this.node.Note)}}</span>
     </v-tooltip>
 
     <v-list-item-icon v-if="node.Icon&&depth>=1">

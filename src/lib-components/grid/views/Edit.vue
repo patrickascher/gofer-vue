@@ -317,7 +317,8 @@ export default {
       <!-- Form Data -->
       <v-form ref="form" v-if="!itemNotFound" v-model="valid">
 
-      <v-row>
+        <!-- This is just a placeholder for a flowing layout. must be configurable at some point. -->
+      <v-row v-if="1==2">
               <v-col v-show="!field.hidden" v-for="(field) in headersNotHidden" :key="field.position+field.name">
                 <component @changes="checkChanges" :api="api" :snapshot="snapshotItem" :options="viewOptions(field)"
                            v-model="item[field.name]"
@@ -325,6 +326,16 @@ export default {
                            :is="getFieldComponent(field)"></component>
                 </v-col>
       </v-row>
+
+        <v-row v-else v-show="!field.hidden" v-for="(field) in headersNotHidden" :key="field.position+field.name">
+          <v-col>
+            <component @changes="checkChanges" :api="api" :snapshot="snapshotItem" :options="viewOptions(field)"
+                       v-model="item[field.name]"
+                       :field="field"
+                       :is="getFieldComponent(field)"></component>
+          </v-col>
+        </v-row>
+
       </v-form>
 
 
