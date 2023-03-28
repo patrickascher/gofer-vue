@@ -77,9 +77,10 @@ export default {
 
   methods: {
     pwRules(field, val) {
+      // oldpw is exculuded from the rules because we can not be sure if the user was not using a unsafe pw in the past.
 
-      if (this.item['Password']!=null && this.item['Password'].length<6) {
-        return ["Min. 6 characters"]
+      if (field!=="oldpw" && this.item['Password']!=null && this.item['Password'].length<8) {
+        return ["Min. 8 characters"]
       }
 
       if (((this.item['OldPassword'] != null && this.item['OldPassword'] !== "") ||
@@ -90,6 +91,14 @@ export default {
 
       if (field === "reenter" && (val !== "" && val != null) && (this.item['RePassword'] !== this.item['Password'] || this.item['OldPassword'] === this.item['RePassword'])) {
         return ["Password is not equal or the same as before"]
+      }
+
+      // add regex
+      if (field!=="oldpw"){
+        const regex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,32})/;
+        if (!regex.test(this.item['Password'])){
+          return ["Password is not complex enough. Min. 8 Chars, 1 uppercase, 1 lowercase, 1 number and 1 special character"]
+        }
       }
 
       return [true]
@@ -271,7 +280,7 @@ export default {
               sm="6"
               md="4"
           >
-            <v-text-field type="password" label="Old password" :rules="pwRules('',item['OldPassword'])"
+            <v-text-field type="password" label="Old password" :rules="pwRules('oldpw',item['OldPassword'])"
                           v-model="item['OldPassword']"></v-text-field>
           </v-col>
         </v-row>
