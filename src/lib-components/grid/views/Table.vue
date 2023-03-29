@@ -71,7 +71,7 @@ user:{},
       itemsTotal: 0,
       // vuetify pagination object
       pagination: {
-        itemsPerPage: 10
+        itemsPerPage: 0
       },
       // filter data
       filter: {
@@ -335,7 +335,11 @@ user:{},
         }
       })
 
-      return encodeURI(this.api + head + "/limit/" + this.pagination.itemsPerPage + "/page/" + this.pagination.page + order + filter + filterCust)
+      let limit=""
+      if (this.pagination.itemsPerPage!==0){
+        limit="/limit/" + this.pagination.itemsPerPage
+      }
+      return encodeURI(this.api + head + limit+ "/page/" + this.pagination.page + order + filter + filterCust)
     },
     addQuickfilter() {
       if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
