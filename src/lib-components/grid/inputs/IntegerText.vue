@@ -57,6 +57,7 @@ export default {
       :rules=rules
       :error-messages="errorMessages"
 
+      :single-line="singleLine"
       :dense="dense"
       :filled="filled"
       :outlined="outlined"

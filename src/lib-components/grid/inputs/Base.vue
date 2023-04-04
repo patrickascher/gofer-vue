@@ -24,7 +24,7 @@ export default {
    * field - {obj} includes the field information from the backend
    * value - is the v-model of the component
    */
-  props: ["field", "value", "translations","disabled", "outlined","clearable", "dense","chips","smallChips", "filled", "hint", "rows", "rowHeight"],
+  props: ["field", "value", "translations","disabled", "outlined","clearable", "dense","chips","singleLine","smallChips", "filled", "hint", "rows", "rowHeight"],
   data() {
     return {
       FieldType: FieldType
@@ -60,8 +60,8 @@ export default {
       return _.get(this.field, "readOnly", false)
     },
     isRequired() {
-      if (_.get(this.field, "options.validate", false) !== false) {
-        if (this.field.options.validate.includes("required")) {
+      if (_.get(this.field, "options.validate.0", false) !== false) {
+        if (this.field.options.validate[0].includes("required")) {
           return true
         }
       }

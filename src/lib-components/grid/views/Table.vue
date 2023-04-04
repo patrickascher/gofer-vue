@@ -82,6 +82,7 @@ user:{},
       config: {
         id: null,
         title: "",
+        disableTitle:false,
         description: null,
         userFilterList:[],
         userActiveFilter:{
@@ -149,7 +150,7 @@ user:{},
       if (this.config.filter.disable) {
         return false
       }
-      return this.config.filter.disableCustomFilter
+      return !this.config.filter.disableCustomFilter
     },
     initLoaded() {
       return this.headers.length !== 0
@@ -375,6 +376,9 @@ user:{},
           // disable the "crud" link
           this.config.id = _.get(resp.data, "config.id", null)
           this.config.title = _.get(resp.data, "config.title", this.$router.currentRoute.name)
+          this.config.disableTitle = _.get(resp.data, "config.disableTitle",false)
+
+
           this.config.description = _.get(resp.data, "config.description", "")
           this.config.createLinks = _.get(resp.data, "config.action.createLinks", null)
 
@@ -483,7 +487,7 @@ user:{},
 
           // adding action icons
           if (_.get(resp.data, "config.action.positionLeft", false) !== false) {
-            this.headers.unshift({text: "Action", align: "end", sortable: false, value: "grid_action"})
+            this.headers.unshift({text: "Action", width:1, align: "end", sortable: false, value: "grid_action"})
           } else {
             this.headers.push({text: "Action", width: 1, sortable: false, value: "grid_action"})
           }
@@ -491,7 +495,6 @@ user:{},
         }
 
         if (this.headers.length > 0) {
-
           for (let i = 0; i < this.headers.length; i++) {
 
 
@@ -531,7 +534,7 @@ user:{},
                 }
                 _.forEach(_this.headers[i].options.select[0].Items, function (v) {
                   if (v.value === resp.data.data[index][head.name]) {
-                    resp.data.data[index][head.name] = v.text
+                    resp.data.data[index][head.name] = _this.$t(v.text)
                   }
                 });
               });
@@ -633,7 +636,7 @@ user:{},
 <template>
   <v-flex>
 
-    <v-row>
+    <v-row v-if="!config.disableTitle">
       <v-col cols="auto"
              class="mr-auto">
 
@@ -721,11 +724,10 @@ user:{},
           <v-icon v-if="!config.filter.openQuickFilter" small>mdi-filter</v-icon>
           <v-icon v-else small>mdi-filter-remove</v-icon>
         </v-btn>
-
-        <v-menu v-model="showFilterMenu" v-show="initLoaded&&!config.filter.disable&&api.indexOf('/filter/')===-1" offset-y>
+        <v-menu v-model="showFilterMenu" v-show="initLoaded&&filterCustomerAllowed&&api.indexOf('/filter/')===-1" offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
-                v-show="initLoaded&&!config.filter.disable&&api.indexOf('/filter/')===-1"
+                v-show="initLoaded&&filterCustomerAllowed&&api.indexOf('/filter/')===-1"
                 small
                    color="primary"
                    v-on="on"

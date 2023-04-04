@@ -39,7 +39,7 @@ export default {
             this.snapshot[this.field.name]=[]
           }else{
             this.fieldValue = this.value.split(",")
-            this.snapshot[this.field.name]=this.value.split(",")
+            this.snapshot[this.field.name]=this.value.split(",") //? WHY
           }
         }
         return this.value;
@@ -133,7 +133,7 @@ export default {
           rv.push(value)
         }
       });
-      return rv.join(" ")
+      return this.$t(rv.join(" "))
     },
     getSelectValue(field) {
       // select object does not exist.
@@ -234,6 +234,7 @@ export default {
       v-model="fieldValue2"
       :rules=rules
 
+      :single-line="singleLine"
       :dense="dense"
       :filled="filled"
       :outlined="outlined"
@@ -260,7 +261,7 @@ export default {
       :hint="field.description"
       :items="selectVal"
       :no-data-text="noDataTxt"
-
+      :single-line="singleLine"
       :search-input.sync="search"
 
       :item-value="field.options.select[0].ValueField"
@@ -286,7 +287,7 @@ export default {
       :item-value="field.options.select[0].ValueField"
       :item-text="getTextFields"
       :loading="selectLoading"
-
+      :single-line="singleLine"
       :multiple="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple"
       :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple||chips"
       :small-chips="smallChips"

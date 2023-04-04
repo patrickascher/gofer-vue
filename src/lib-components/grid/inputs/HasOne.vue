@@ -111,7 +111,7 @@ export default {
 <template>
 
   <v-flex v-show="!isHidden()" class="mb-3" v-if="isType(FieldType.HasMany) || isType(FieldType.HasOne)">
-    <v-toolbar class="elevation-1" color="white">
+    <v-toolbar flat dense class="elevation-1" color="white">
       <v-toolbar-title>{{ getLabel }} {{ field.description }}
       </v-toolbar-title>
       <v-spacer></v-spacer>

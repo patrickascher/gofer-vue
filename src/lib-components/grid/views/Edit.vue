@@ -194,6 +194,18 @@ export default {
           this.item = this.buildItemFromHeader(this.head);
         } else {
           this.item = resp.data.data;
+          //manipulation if a relation has a belongsTo field with Multiselect
+          this.head.forEach((head) => {
+            if (head.type === "hasMany") {
+              head.fields.forEach((field) => {
+                if(field.type==="MultiSelect"){
+                  this.item[head.name].forEach((data,i)=>{
+                    this.item[head.name][i][field.name] =  this.item[head.name][i][field.name].split(",")
+                  })
+                }
+              })
+            }
+          })
         }
 
         //manipulations for relations and null
