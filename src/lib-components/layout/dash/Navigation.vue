@@ -23,7 +23,7 @@ export default {
   computed: {
     sorted: {
       get: function () {
-        return this.items ? _.sortBy(this.items, "translated") : [];
+        return this.items ? _.sortBy(this.items, ["Position", "translated"]) : [];
       },
       set: function (newValue) {
         this.items = newValue
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     sortedT: function(item){
-      return item ? _.sortBy(item, "translated") : [];
+      return item ? _.sortBy(item, ["Position", "translated"]) : [];
     },
     createTranslatedNames: function () {
       let _this = this

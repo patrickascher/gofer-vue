@@ -79,6 +79,9 @@ export default {
     getLabel: function () {
       return this.required === true ? this.$t(this.field.title) + ' *' : this.$t(this.field.title);
     },
+    getWidth: function(){
+      return _.get(this.field, "options.width.0", null)
+    },
     /**
      * fieldValue is used to set value correct to the given v-model of the parent call
      */

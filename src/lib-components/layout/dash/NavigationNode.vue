@@ -8,7 +8,7 @@ import {
   VListItemSubtitle,
   VListItemTitle,
   VTooltip,
-    VAvatar
+    VAvatar,
 } from 'vuetify/lib'
 
 export default {
@@ -50,7 +50,8 @@ export default {
           for (let i = 0; i < node.Children.length; i++) {
             let child = node.Children[i];
 
-            if (child.Route.Pattern !== "" && this.$route.path.startsWith(child.Route.Pattern)) {
+            console.log(this.$route, child.Route.Pattern)
+            if (child.Route.Pattern !== "" && typeof child.Route.Pattern!=="undefined" && this.$route.path.length>=child.Route.Pattern.length && this.$route.path.startsWith(child.Route.Pattern)) {
               return true;
             }
 
@@ -80,7 +81,7 @@ export default {
   >
 
     <template v-slot:activator>
-      <v-list-item @click.native.stop v-if="node.Route.Pattern" :to="node.Route.Pattern" class="item-link"></v-list-item>
+      <v-list-item @click.native.stop v-if="node.Route.Pattern" :to="node.Route.Pattern"></v-list-item>
       <v-list-item-title>
         {{ node.Title }}
       </v-list-item-title>
@@ -88,10 +89,12 @@ export default {
 
     <nav-node v-for="item in node.Children" :key="item.Id" :depth="depth<=0?1:depth+1" :node="item"></nav-node>
   </v-list-group>
+
   <v-list-item
       :value="isActive"
       :prepend-icon="depth<1?node.Icon:null"
       :to="node.Route.Pattern"
+      :class="'navpoint-depth-'+depth"
       v-else>
     <v-list-item-icon v-if="depth<1">
       <v-icon v-text="node.Icon"></v-icon>
@@ -109,14 +112,15 @@ export default {
     </v-list-item-icon>
   </v-list-item>
 
+
 </template>
 
 <style>
-.item-link {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
+.navpoint-depth-2{
+  padding-left:4rem !important;
+  background-color: whitesmoke;
+}
+.v-list-group--sub-group{
+  padding-left:0.5rem;
 }
 </style>
