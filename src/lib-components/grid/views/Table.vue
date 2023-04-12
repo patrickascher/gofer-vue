@@ -53,7 +53,7 @@ export default {
     VListItemGroup,
     UserFilter
   },
-  props: {api: String},
+  props: {api: String,closedFilter:Boolean,reload:Boolean},
   data() {
     return {
       refreshHeader: [], // needed for reloading the headers
@@ -117,6 +117,11 @@ user:{},
    * If a change happens, the data will get new requested.
    */
   watch: {
+    reload:function(v){
+      if(v){
+        this.getData("pagination")
+      }
+    },
     pagination: function (newVal, oldVal) {
       if (_.get(oldVal, "page", false) === false ||
           newVal.page !== oldVal.page ||
@@ -184,6 +189,9 @@ user:{},
   },
 
   methods: {
+    forceReload(){
+      this.getData("pagination")
+    },
     callbacks(v,h){
       if (v===null){
         return ""
@@ -231,6 +239,7 @@ user:{},
     getValue(item,field, decorator, separator) {
       item = item[field]
 
+
       if (decorator === "") {
         return item
       }
@@ -241,7 +250,6 @@ user:{},
       let reg = /{{.*?}}/g;
       let matches = decorator.match(reg);
       let rv = []
-
 
       _.forEach(item, function (value) {
         let decor = decorator
@@ -258,14 +266,20 @@ user:{},
                 }
               });
               decor = decor.replace("{{" + id.join(".") + "}}", tmpValue.join(", "))
-              return false;
+              //return false; TODO why?
             }
             decor = decor.replace("{{" + id.join(".") + "}}", value[id[0]])
           } else {
             decor = decor.replace("{{" + id.join(".") + "}}", "")
           }
         });
-        rv.push(decor)
+
+        // check if the result is different as the decorator.
+        if (decor !== decorator.replace(new RegExp('{{.*?}}', 'gi'),"")){
+          rv.push(decor)
+        }else{
+          rv.push("")
+        }
       });
 
       return rv.join(separator)
@@ -391,7 +405,7 @@ user:{},
           this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", 10)
           this.config.filter.allowedRowsPerPage = _.get(resp.data, "config.filter.allowedRowsPerPage", [5, 10, 15, 25, 50, 100, 500])
           // open filter bar if a filter is set or configured so.
-          if (url.includes("filter/") || url.includes("filter_")) {
+          if ((url.includes("filter/") || url.includes("filter_")) && this.closedFilter!==true) {
             this.config.filter.openQuickFilter = true;
           } else {
             this.config.filter.openQuickFilter = _.get(resp.data, "config.filter.openQuickFilter", false)
@@ -883,7 +897,7 @@ user:{},
         <tr style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :header="header" :parent-data="item" :api="api" :is="header.view"></component>
+              <component v-model="item[header.name]" :config="config" :header="header" @forceReload="forceReload":parent-data="item" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]">

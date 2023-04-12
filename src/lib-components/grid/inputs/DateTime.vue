@@ -237,9 +237,9 @@ export default {
 </script>
 
 <template>
-  <v-layout v-show="!isHidden()" row wrap>
+  <v-layout v-show="!isHidden()" >
 
-      <v-row no-gutters>
+      <v-row>
         <v-col :md="isType(FieldType.DateTime)&&!fromTo?6:12">
 
       <v-menu v-if="isType(FieldType.Date) ||isType(FieldType.DateTime)"

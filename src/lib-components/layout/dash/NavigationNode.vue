@@ -50,7 +50,6 @@ export default {
           for (let i = 0; i < node.Children.length; i++) {
             let child = node.Children[i];
 
-            console.log(this.$route, child.Route.Pattern)
             if (child.Route.Pattern !== "" && typeof child.Route.Pattern!=="undefined" && this.$route.path.length>=child.Route.Pattern.length && this.$route.path.startsWith(child.Route.Pattern)) {
               return true;
             }

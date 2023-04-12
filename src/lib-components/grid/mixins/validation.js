@@ -89,6 +89,14 @@ export var validation = {
                                     break;
                             }
                             break;
+                        case "limit": // was created if there is a char limit for integer fields
+                            switch (this.field.type) {
+                                case FieldType.Integer:
+                                    this.counter = value;
+                                    rules.push(stringSizeMax(this.value, value, "Use less letters"));
+                                    break;
+                            }
+                            break;
                         case "numeric":
                             if (!omitempty) { //needed because the backend throws an error if its empty and no omitempty is set
                                 this.required = true;
