@@ -5,6 +5,7 @@ import user from './modules/user'
 import navigation from './modules/navigation'
 import selectValues from './modules/selectValues'
 import languages from './modules/languages'
+import grid from './modules/grid'
 
 Vue.use(Vuex);
 
@@ -14,7 +15,8 @@ export const store = new Vuex.Store({
         user,
         navigation,
         selectValues,
-        languages
+        languages,
+        grid
     }
 })
 

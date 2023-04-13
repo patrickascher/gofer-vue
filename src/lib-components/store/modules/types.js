@@ -23,6 +23,11 @@ export const NAVIGATION = {
     CLEAR: "NAV_CLEAR",
 };
 
+export const GRID = {
+    RELOAD: "GRID_RELOAD",
+    CLEAR: "GRID_CLEAR",
+};
+
 export const SELECT = {
     GET_DATA: 'SELECT_GET_DATA',
     SET_DATA: 'SELECT_SET_DATA',

@@ -1,6 +1,6 @@
 <script>
 import {store} from '@/lib-components/store'
-import {ALERT, USER,NAVIGATION} from '@/lib-components/store/modules/types'
+import {ALERT, USER, NAVIGATION, GRID} from '@/lib-components/store/modules/types'
 import {
   VBtn,
   VCol,
@@ -25,6 +25,7 @@ import {Config} from "@/lib-components";
 import "./../mdiView";
 import InputDateTime from '@/lib-components/grid/inputs/DateTime'
 import UserFilter from '@/lib-components/grid/views/UserFilter'
+import {userService} from "@/lib-components/services/user";
 
 
 export default {
@@ -53,7 +54,7 @@ export default {
     VListItemGroup,
     UserFilter
   },
-  props: {api: String,closedFilter:Boolean,reload:Boolean},
+  props: {api: String,closedFilter:Boolean},
   data() {
     return {
       refreshHeader: [], // needed for reloading the headers
@@ -111,17 +112,18 @@ user:{},
   },
   created() {
     this.user = store.getters['user/' + USER.GET_DATA]
+    store.watch(state => state.grid.reload, () => {
+      if (store.state.grid.reload === true) {
+        this.getData("pagination")
+        store.commit('grid/' + GRID.CLEAR)
+      }
+    });
   },
   /**
    * watch is used to check any changes of the vuetify pagination.
    * If a change happens, the data will get new requested.
    */
   watch: {
-    reload:function(v){
-      if(v){
-        this.getData("pagination")
-      }
-    },
     pagination: function (newVal, oldVal) {
       if (_.get(oldVal, "page", false) === false ||
           newVal.page !== oldVal.page ||
@@ -189,9 +191,6 @@ user:{},
   },
 
   methods: {
-    forceReload(){
-      this.getData("pagination")
-    },
     callbacks(v,h){
       if (v===null){
         return ""
@@ -897,7 +896,7 @@ user:{},
         <tr style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :config="config" :header="header" @forceReload="forceReload":parent-data="item" :api="api" :is="header.view"></component>
+              <component v-model="item[header.name]" :config="config" :header="header" :parent-data="item" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]">

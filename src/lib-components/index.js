@@ -48,6 +48,7 @@ export {ALERT as StoreAlert} from './store/modules/types';
 export {SELECT as StoreSelect} from './store/modules/types';
 export {USER as StoreUser} from './store/modules/types';
 export {NAVIGATION as StoreNavigation} from './store/modules/types';
+export {GRID as StoreGrid} from './store/modules/types';
 
 export {userService as UserService} from './services/user';
 export {i18nService as I18nService} from './services/i18n';

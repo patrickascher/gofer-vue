@@ -14,6 +14,7 @@ export const userService = {
     getUser,
     setRedirectPath,
     redirectLogin,
+    setRedirectAfterLoginPath,
     redirectAfterLoginPath,
     removeUserStores
 };
@@ -32,10 +33,14 @@ const ApiChangePW = "/pw/change"
 const ApiNavigation = "/navigation"
 export const UrlLogin = "/"
 const UrlLogout = "/logout"
-const UrlAfterLogin = "/dash"
+let UrlAfterLogin = "/dash"
 
 function redirectLogin() {
     this.$router.push(UrlLogin)
+}
+
+function setRedirectAfterLoginPath(path){
+    UrlAfterLogin = path
 }
 
 // login returns a Promise if the login was successful or failed
