@@ -12,13 +12,13 @@ export const i18n = new VueI18n({
     locale: 'en', // set locale
     fallbackLocale: 'en',
     silentFallbackWarn: true,
-    silentTranslationWarn: true
+    silentTranslationWarn: true,
 })
 
 // i18nService
 export const i18nService = {
     i18n,
-    loadLanguageAsync
+    loadLanguageAsync,
 };
 
 // setI18nLanguage will set the language in different places in the app.
@@ -26,6 +26,7 @@ function setI18nLanguage(lang) {
     i18n.locale = lang
     http.defaults.headers.common['Accept-Language'] = lang
     document.querySelector('html').setAttribute('lang', lang)
+
     return lang
 }
 

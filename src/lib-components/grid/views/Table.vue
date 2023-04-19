@@ -54,7 +54,7 @@ export default {
     VListItemGroup,
     UserFilter
   },
-  props: {api: String,closedFilter:Boolean},
+  props: {api: String,closedFilter:Boolean,dense:Boolean,additionalPass:Object},
   data() {
     return {
       refreshHeader: [], // needed for reloading the headers
@@ -79,6 +79,7 @@ user:{},
         values: {},
         lastValues: {},
       },
+      additional:{},
       // backend config/default config will be generated
       config: {
         id: null,
@@ -106,7 +107,7 @@ user:{},
         createLinks: null,
         detail: true,
         update: true,
-        delete: true
+        delete: true,
       },
     }
   },
@@ -560,6 +561,27 @@ user:{},
 
         // set the items
         this.items = (resp.data.data == null) ? [] : resp.data.data;
+
+
+        // add additional data
+        let additionalData = Object.keys(resp.data)
+        additionalData = additionalData.filter(function(e) { return e !== 'data'&& e!=='pagination' && e!=='head' && e!=='config' })
+        if (additionalData.length>0){
+          let _this = this
+          _.forEach(additionalData, function (ad) {
+            _this.additional[ad] = resp.data[ad]
+          });
+        }
+      /*  var arr = ['three', 'seven', 'eleven'];
+
+// Remove item 'seven' from array
+        var filteredArray = arr.filter(function(e) { return e !== 'seven' })
+//=> ["three", "eleven"]
+
+// In ECMA6 (arrow function syntax):
+        var filteredArray = arr.filter(e => e !== 'seven')
+*/
+
       }).catch((error) => {
         this.vuetifyLoading = false; // reset vuetify loading indicator
         this.vuetifyError = true; // set error indicator
@@ -858,6 +880,7 @@ user:{},
 
     <!-- data grid -->
     <v-data-table
+        :dense="dense"
         :footer-props="{'showFirstLastPage':true,'items-per-page-options': config.filter.allowedRowsPerPage,'items-per-page-text':$t('GRID.RowsPerPage'),'page-text':'{0}-{1} '+$t('GRID.XofY')+' {2}'}"
         :no-data-text="$t('GRID.NoData')"
         :loading-text="$t('GRID.LoadingData')"
@@ -896,7 +919,7 @@ user:{},
         <tr style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :config="config" :header="header" :parent-data="item" :api="api" :is="header.view"></component>
+              <component v-model="item[header.name]" :additionalPass="additionalPass" :additional="additional" :config="config" :header="header" :parent-data="item" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]">

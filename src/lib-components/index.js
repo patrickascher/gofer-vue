@@ -53,3 +53,6 @@ export {GRID as StoreGrid} from './store/modules/types';
 export {userService as UserService} from './services/user';
 export {i18nService as I18nService} from './services/i18n';
 export {i18n as i18n} from './services/i18n';
+
+// History
+export {HistoryToString as HistoryToString} from './grid/views/EditHistory.vue'

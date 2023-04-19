@@ -1,5 +1,4 @@
 <script>
-
 import {
   VAppBar,
   VAvatar,
@@ -18,6 +17,95 @@ import {http} from "@/lib-components/services/http";
 import {dateService} from "@/lib-components/services/date";
 import {store} from "@/lib-components/store";
 import {ALERT} from "@/lib-components/store/modules/types";
+import {i18nService} from "@/lib-components/services/i18n";
+export function HistoryToString(value){
+  try {
+    let rv = ""
+    _.forEach(JSON.parse(value), function (val) {
+      let field = historyTextTitle(val.Field)
+      let newValue = val.New
+      let oldValue = val.Old
+      let childs = val.Children
+
+      // normal fields
+      if (typeof childs === 'undefined') {
+        if (typeof oldValue === 'undefined' || oldValue===null) {
+          rv += i18nService.i18n.t('HISTORY.CreateEntry', {
+            Field: field,
+            NewValue: historyTextValue(newValue)
+          }) + "<br/>"
+        } else if (typeof newValue === 'undefined') {
+          rv += i18nService.i18n.t('HISTORY.DeleteEntry', {
+            Field: field,
+            OldValue: historyTextValue(oldValue, "deleted")
+          }) + "<br/>"
+        } else {
+
+
+          rv += i18nService.i18n.t('HISTORY.UpdateEntry', {
+            Field: field,
+            NewValue: historyTextValue(newValue),
+            OldValue: historyTextValue(oldValue)
+          }) + "<br/>"
+        }
+      } else {
+        rv += "<h4>"+field + "</h4>";
+        let index = null
+        let rvChild=[]
+        _.forEach(childs, function (child) {
+          field = historyTextTitle(child.Field)
+          let newValue = child.New
+          let oldValue = child.Old
+
+          let _rv =""
+          if (typeof child.Index!=="undefined"){
+            _rv += "(" + (child.Index+1) + ") "
+
+          }
+
+          if (typeof oldValue === 'undefined' || oldValue===null) {
+            _rv += i18nService.i18n.t('HISTORY.CreateEntry', {
+              Field: field,
+              NewValue: historyTextValue(newValue)
+            })
+          } else if (typeof newValue === 'undefined') {
+            _rv += i18nService.i18n.t('HISTORY.DeleteEntry', {
+              Field: field,
+              OldValue: historyTextValue(oldValue, "deleted")
+            })
+          } else {
+            _rv += i18nService.i18n.t('HISTORY.UpdateEntry', {
+              Field: field,
+              NewValue: historyTextValue(newValue),
+              OldValue: historyTextValue(oldValue)
+            })
+          }
+
+          rvChild.push(_rv)
+        });
+
+        rv += rvChild.join("<br/>")
+      }
+
+    });
+    return rv
+  } catch (e) {
+    console.log(e)
+    // normal text
+    return value;
+  }
+}
+
+function historyTextTitle(title) {
+  return "<b>" + title + ":</b>"
+}
+function historyTextValue(val, v) {
+  if (v === "deleted") {
+    return "<span style=\"text-decoration: line-through\">" + val + "</span>"
+  }
+  return "<span style=\"text-decoration: underline\">" + val + "</span>"
+}
+
 
 export default {
   props: {
@@ -66,93 +154,7 @@ export default {
       return this.users[id].Name + " " + this.users[id].Surname;
     },
     historyText(value) {
-      try {
-        let rv = ""
-        let _this = this
-        _.forEach(JSON.parse(value), function (val) {
-          let field = _this.historyTextTitle(val.Field)
-          let newValue = val.New
-          let oldValue = val.Old
-          let childs = val.Children
-
-          // normal fields
-          if (typeof childs === 'undefined') {
-            if (typeof oldValue === 'undefined') {
-              rv += _this.$t('HISTORY.CreateEntry', {
-                Field: field,
-                NewValue: _this.historyTextValue(newValue)
-              }) + "<br/>"
-            } else if (typeof newValue === 'undefined') {
-              rv += _this.$t('HISTORY.DeleteEntry', {
-                Field: field,
-                OldValue: _this.historyTextValue(oldValue, "deleted")
-              }) + "<br/>"
-            } else {
-              rv += _this.$t('HISTORY.UpdateEntry', {
-                Field: field,
-                NewValue: _this.historyTextValue(newValue),
-                OldValue: _this.historyTextValue(oldValue)
-              }) + "<br/>"
-            }
-          } else {
-            rv += field + "<br/>";
-            let index = null
-            _.forEach(childs, function (child) {
-              field = _this.historyTextTitle(child.Field)
-              let newValue = child.New
-              let oldValue = child.Old
-
-              if (index == null) {
-                index = child.Index
-                if (typeof index !== "undefined") {
-                  rv += "(" + index + ") "
-                }
-              }
-
-              if (typeof oldValue === 'undefined') {
-                rv += _this.$t('HISTORY.CreateEntry', {
-                  Field: field,
-                  NewValue: _this.historyTextValue(newValue)
-                })
-              } else if (typeof newValue === 'undefined') {
-                rv += _this.$t('HISTORY.DeleteEntry', {
-                  Field: field,
-                  OldValue: _this.historyTextValue(oldValue, "deleted")
-                })
-              } else {
-                rv += _this.$t('HISTORY.UpdateEntry', {
-                  Field: field,
-                  NewValue: _this.historyTextValue(newValue),
-                  OldValue: _this.historyTextValue(oldValue)
-                })
-              }
-
-              if (index !== child.Index) {
-                index = child.Index
-                rv += "<br/>"
-                if (typeof index !== "undefined") {
-                  rv += "(" + index + ") "
-                }
-              }
-            });
-
-          }
-
-        });
-        return rv
-      } catch (e) {
-        // normal text
-        return value;
-      }
-    },
-    historyTextTitle(title) {
-      return "<b>" + title + ":</b>"
-    },
-    historyTextValue(val, v) {
-      if (v === "deleted") {
-        return "<span style=\"text-decoration: line-through\">" + val + "</span>"
-      }
-      return "<span style=\"text-decoration: underline\">" + val + "</span>"
+     return HistoryToString(value)
     },
     getData() {
       this.loading = true;
