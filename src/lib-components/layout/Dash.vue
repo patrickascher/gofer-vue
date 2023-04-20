@@ -39,15 +39,19 @@ export default {
       userMenu: false,
      profileDialog:false,
       profileDialogPassword:false,
+      passwordChangeAllowed:false,
       languages: {},
       user:{},
     }
   },
   created() {
+
     this.user = store.getters['user/' + USER.GET_DATA]
     store.watch(state => state.languages.availableLangs, () => {
       this.languages = store.state.languages.availableLangs
     });
+
+    this.passwordChangeAllowed = Config.get('webserver.auth.providers.'+this.user.Options.provider+'.changepassword')
 
     if (_.has(this.user, ['State']) && this.user.State === "PWCHANGE") {
       // TODO show PW CHANGE FORM
@@ -188,7 +192,7 @@ export default {
                     transition="dialog-bottom-transition">
             <template v-slot:activator="{ on, attrs }">
 
-              <v-list-item  @click="profileDialogPassword=true"  v-on="on">
+              <v-list-item  v-if="passwordChangeAllowed" @click="profileDialogPassword=true"  v-on="on">
                 <v-list-item-title>Change password</v-list-item-title>
               </v-list-item>
 

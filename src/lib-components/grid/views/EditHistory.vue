@@ -101,9 +101,9 @@ function historyTextTitle(title) {
 }
 function historyTextValue(val, v) {
   if (v === "deleted") {
-    return "<span style=\"text-decoration: line-through\">" + val + "</span>"
+    return "<span style=\"text-decoration: line-through\">" + i18nService.i18n.t(val) + "</span>"
   }
-  return "<span style=\"text-decoration: underline\">" + val + "</span>"
+  return "<span style=\"text-decoration: underline\">" + i18nService.i18n.t(val) + "</span>"
 }
 
 

@@ -317,11 +317,12 @@ export default {
                     hide-overlay
                     transition="dialog-bottom-transition">
             <template v-slot:activator="{ on, attrs }">
+
               <v-btn v-on="on" small color="primary">
                 <v-icon small>mdi-history</v-icon>
               </v-btn>
             </template>
-            <history :api="api" :config="config" v-model="showHistory"></history>
+            <history  :api="api" :config="config" v-model="showHistory"></history>
           </v-dialog>
         </v-col>
       </v-row>

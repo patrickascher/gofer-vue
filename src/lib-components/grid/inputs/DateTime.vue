@@ -92,7 +92,7 @@ export default {
           let time = originalValue.substr(originalValue.indexOf('T'));
           this.fieldValue = newValue +time
         }else{
-          this.fieldValue = newValue
+          this.fieldValue = newValue+"T00:00:00Z" // needed for go.
         }
       }
     },
@@ -237,9 +237,10 @@ export default {
 </script>
 
 <template>
-  <v-layout v-show="!isHidden()" >
+  <v-layout v-show="!isHidden()" :row="fromTo" :wrap="fromTo">
 
-      <v-row>
+    <v-row>
+
         <v-col :md="isType(FieldType.DateTime)&&!fromTo?6:12">
 
       <v-menu v-if="isType(FieldType.Date) ||isType(FieldType.DateTime)"

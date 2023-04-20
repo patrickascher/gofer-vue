@@ -1,5 +1,5 @@
 <script>
-import {VAutocomplete, VCombobox, VListItem, VListItemTitle, VListItemContent, VSelect} from 'vuetify/lib'
+import {VAutocomplete, VCombobox, VListItem, VListItemTitle, VListItemContent,VListItemSubtitle, VSelect} from 'vuetify/lib'
 import InputBase from '@/lib-components/grid/inputs/Base'
 import {validation} from '@/lib-components/grid/mixins/validation'
 import {store} from '@/lib-components/store'
@@ -8,7 +8,7 @@ import {http} from '@/lib-components/services/http'
 
 
 export default {
-  components: {VCombobox, VAutocomplete, VListItem, VListItemTitle, VListItemContent, VSelect},
+  components: {VCombobox, VAutocomplete, VListItem, VListItemTitle, VListItemContent, VListItemSubtitle,VSelect},
   extends: InputBase,
   mixins: [validation],
   props: ["api", "parent","snapshot"],
@@ -118,7 +118,7 @@ export default {
 
       // delay new call 500ms
       this._timerId = setTimeout(() => {
-        this.getAPIData(fieldId)
+       this.getAPIData(fieldId)
       }, 500)
     },
     getTextFields(item) {
@@ -166,6 +166,7 @@ export default {
     },
     getAPIData(field) {
       this.selectLoading = true;
+
       // cached values
       if (field in store.state.selectValues.cache && !this.isCombobox && !this.isAutocomplete) {
         this.selectVal = store.state.selectValues.cache[field]
@@ -178,6 +179,13 @@ export default {
 
       let autocomplete = ""
       if (this.isAutocomplete === true || this.isCombobox) {
+
+        // if autocomplete with items already set
+        if(this.selectVal.length>0){
+          this.selectLoading = false;
+          return
+        }
+
         autocomplete = "/q/" + this.search
         if (this.search === null || this.search === "") {
           this.selectLoading = false;
@@ -273,7 +281,16 @@ export default {
       :dense="dense"
       :filled="filled"
       :outlined="outlined"
-  ></v-autocomplete>
+  >
+    <template v-slot:item="{ item }">
+      <v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title v-html="item.value"></v-list-item-title>
+          <v-list-item-subtitle v-html="item.Custom.SubTitle"></v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item-content>
+    </template>
+  </v-autocomplete>
 
   <v-select
       v-else
