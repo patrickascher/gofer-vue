@@ -105,6 +105,7 @@ user:{},
         export: [],
         create: true,
         createLinks: null,
+        createTitle:null,
         detail: true,
         update: true,
         delete: true,
@@ -395,6 +396,7 @@ user:{},
 
           this.config.description = _.get(resp.data, "config.description", "")
           this.config.createLinks = _.get(resp.data, "config.action.createLinks", null)
+          this.config.createTitle = _.get(resp.data, "config.action.createTitle", null)
 
           this.config.create = !_.get(resp.data, "config.action.disableCreate", false)
           this.config.detail = !_.get(resp.data, "config.action.disableDetail", false)
@@ -711,7 +713,8 @@ user:{},
             class="mr-2"
             :to="$route.path + '/mode/create'"
         >
-          {{ $t('COMMON.Add') }}
+          <span v-if="config.createTitle===null">{{ $t('COMMON.Add') }}</span>
+          <span v-else>{{ $t(config.createTitle) }}</span>
         </v-btn>
 
         <v-menu offset-y v-if="config.createLinks!=null">
