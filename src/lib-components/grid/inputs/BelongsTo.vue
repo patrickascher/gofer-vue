@@ -286,7 +286,7 @@ export default {
       <v-list-item-content>
         <v-list-item-content>
           <v-list-item-title v-html="item.value"></v-list-item-title>
-          <v-list-item-subtitle v-html="item.Custom.SubTitle"></v-list-item-subtitle>
+          <v-list-item-subtitle v-html="item.custom.SubTitle"></v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item-content>
     </template>
