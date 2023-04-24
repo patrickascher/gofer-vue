@@ -98,6 +98,7 @@ export default {
         }
       }
     },
+
     isAutocomplete() {
       return _.get(this.field, "options.autocomplete.0", false)
     },
@@ -112,6 +113,9 @@ export default {
     }
   },
   methods: {
+    subTitle:function(item){
+      return _.get(item,"custom.SubTitle",false)
+    },
     fetchEntriesDebounced(fieldId) {
       // cancel pending call
       clearTimeout(this._timerId)
@@ -122,6 +126,7 @@ export default {
       }, 500)
     },
     getTextFields(item) {
+
       let arr = _.split(_.get(this.field.options.select[0],"TextField","text"), ",")
       let rv = []
 
@@ -144,14 +149,14 @@ export default {
       this.isMultiple = _.get(this.field, "options.select.0.Multiple", false)
 
       // user defined his own items.
-      if (_.get(this.field, "options.select.0.Items", false) !== false) {
+      if (_.get(this.field, "options.select.0.api", false) === false) {
         this.selectVal = this.field.options.select[0].Items;
         return
       }
 
 
       // load all items of the relation
-      //this.loading = true;
+      this.loading = true;
       if (_.get(this.parent, "name", false) !== false && field.indexOf(".") === -1) {
         field = this.parent.name + "." + field;
       }
@@ -181,9 +186,9 @@ export default {
       if (this.isAutocomplete === true || this.isCombobox) {
 
         // if autocomplete with items already set
-        if(this.selectVal.length>0){
+        if (_.get(this.field, "options.select.0.api", false) === false) {
           this.selectLoading = false;
-          return
+           return
         }
 
         autocomplete = "/q/" + this.search
@@ -282,11 +287,13 @@ export default {
       :filled="filled"
       :outlined="outlined"
   >
-    <template v-slot:item="{ item }">
+
+
+    <template v-slot:item="{ props,item }">
       <v-list-item-content>
         <v-list-item-content>
-          <v-list-item-title v-html="item.value"></v-list-item-title>
-          <v-list-item-subtitle v-html="item.custom.SubTitle"></v-list-item-subtitle>
+          <v-list-item-title>{{getTextFields(item)}}</v-list-item-title>
+          <v-list-item-subtitle v-if="subTitle(item)" v-html="subTitle(item)"></v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item-content>
     </template>
