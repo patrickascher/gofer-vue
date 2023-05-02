@@ -69,6 +69,13 @@ export default {
     }
   },
   methods: {
+    cssStyle: function(head) {
+      let v = _.get(head,"options.width.0",false)
+      if(v!==false){
+        return "width:"+v+"px;"
+      }
+      return false
+    },
     viewOptions: viewOptions,
     getFieldComponent(field) {
       return FieldComponent(field)
@@ -136,8 +143,9 @@ export default {
       <template v-slot:item="{ item,index }">
         <tr style="vertical-align: top;">
 
-          <td class="start" v-if="!isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields"
+          <td :style="cssStyle(head)" class="start pr-0" v-if="!isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields"
               :key="head.name">
+
             <component :api="api"
                        :field="head"
                        :parent="field"

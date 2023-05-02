@@ -149,11 +149,10 @@ export default {
       this.isMultiple = _.get(this.field, "options.select.0.Multiple", false)
 
       // user defined his own items.
-      if (_.get(this.field, "options.select.0.api", false) === false) {
+      if (_.get(this.field, "options.select.0.Items", false) !== false) {
         this.selectVal = this.field.options.select[0].Items;
         return
       }
-
 
       // load all items of the relation
       this.loading = true;
@@ -186,7 +185,7 @@ export default {
       if (this.isAutocomplete === true || this.isCombobox) {
 
         // if autocomplete with items already set
-        if (_.get(this.field, "options.select.0.api", false) === false) {
+        if (_.get(this.field, "options.select.0.Items", false) !== false) {
           this.selectLoading = false;
            return
         }

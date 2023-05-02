@@ -97,7 +97,7 @@ export function HistoryToString(value){
 }
 
 function historyTextTitle(title) {
-  return "<b>" + title + ":</b>"
+  return "<b>" + i18nService.i18n.t(title) + ":</b>"
 }
 function historyTextValue(val, v) {
   if (v === "deleted") {

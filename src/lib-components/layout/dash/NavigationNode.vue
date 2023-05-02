@@ -31,15 +31,16 @@ export default {
         this.showTooltip = this.$el.children[1].offsetWidth < this.$el.children[1].scrollWidth
       }
     },
-    createTranslatedNames: function () {
-        this.node["translated"] = this.$t(this.node.Title)
-    },
   },
   created: function () {
-    this.createTranslatedNames()
   },
   computed: {
-
+    translatedTitle(){
+      if(this.$te("NAVIGATION."+this.node.Title)){
+       return  this.$t("NAVIGATION."+this.node.Title)
+      }
+      return  this.$t(this.node.Title)
+    },
     isActive() {
       let checkRecursive = (node) => {
         if (node.Route.Pattern === this.$route.path) {
@@ -82,7 +83,7 @@ export default {
     <template v-slot:activator>
       <v-list-item @click.native.stop v-if="node.Route.Pattern" :to="node.Route.Pattern"></v-list-item>
       <v-list-item-title>
-        {{ node.Title }}
+        {{ translatedTitle}}
       </v-list-item-title>
     </template>
 
@@ -101,7 +102,7 @@ export default {
 
     <v-tooltip right :disabled="!node.Note">
       <template v-slot:activator="{ on }">
-        <v-list-item-title v-on="on">{{ node.Title  }}</v-list-item-title>
+        <v-list-item-title v-on="on">{{ translatedTitle  }}</v-list-item-title>
       </template>
       <span>{{$t(this.node.Note)}}</span>
     </v-tooltip>

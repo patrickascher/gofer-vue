@@ -38,6 +38,7 @@ export {default as Alert} from './alert/Alert.vue';
 export {default as Config} from './services/config';
 export {http as Http} from './services/http';
 export {dateService as DateService} from './services/date';
+export {default as UploadService} from './services/upload';
 
 // validation
 export {validation as InputValidation} from "./grid/mixins/validation";
