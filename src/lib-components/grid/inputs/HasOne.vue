@@ -143,10 +143,12 @@ export default {
       <template v-slot:item="{ item,index }">
         <tr style="vertical-align: top;">
 
-          <td :style="cssStyle(head)" class="start pr-0" v-if="!isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields"
+          <td  class="start pr-0" v-if="!isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields"
               :key="head.name">
 
-            <component :api="api"
+            <component
+                :style="cssStyle(head)"
+                :api="api"
                        :field="head"
                        :parent="field"
                        :parentData="fieldValue"

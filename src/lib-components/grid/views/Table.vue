@@ -114,12 +114,16 @@ user:{},
   },
   created() {
     this.user = store.getters['user/' + USER.GET_DATA]
-    store.watch(state => state.grid.reload, () => {
+
+    this.unwatch = store.watch(state => state.grid.reload, () => {
       if (store.state.grid.reload === true) {
         this.getData("pagination")
         store.commit('grid/' + GRID.CLEAR)
       }
     });
+  },
+  beforeDestroy() {
+    this.unwatch();
   },
   /**
    * watch is used to check any changes of the vuetify pagination.
@@ -379,7 +383,6 @@ user:{},
       this.vuetifyLoading = true; // set vuetify loading indicator
       let url = this.backendUrl(withHeader)
       http.get(url).then((resp) => {
-
         // only set data if config exists. (not dataOnly load)
         if (_.get(resp.data, "config", null) !== null) {
           // export

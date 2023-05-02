@@ -47,7 +47,7 @@ export default {
   created() {
 
     this.user = store.getters['user/' + USER.GET_DATA]
-    store.watch(state => state.languages.availableLangs, () => {
+    this.unwatch = store.watch(state => state.languages.availableLangs, () => {
       this.languages = store.state.languages.availableLangs
     });
 
@@ -56,6 +56,9 @@ export default {
     if (_.has(this.user, ['State']) && this.user.State === "PWCHANGE") {
       // TODO show PW CHANGE FORM
     }
+  },
+  beforeDestroy() {
+    this.unwatch()
   },
   computed: {
     roles() {

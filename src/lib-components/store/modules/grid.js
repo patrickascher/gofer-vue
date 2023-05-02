@@ -1,7 +1,14 @@
-import {GRID} from './types'
+import {GRID, USER} from './types'
 
 const state = {
     reload: null
+};
+
+
+const getters = {
+    [GRID.RELOAD]: state => {
+        return state.reload
+    },
 };
 
 const mutations = {
@@ -16,5 +23,6 @@ const mutations = {
 export default {
     namespaced: true,
     state,
+    getters,
     mutations
 };

@@ -67,7 +67,7 @@ export default {
         store.commit('alert/' + ALERT.ERROR, error);
     });
 
-    store.watch(state => state.navigation.reload, () => {
+    this.unwatch = store.watch(state => state.navigation.reload, () => {
       if (store.state.navigation.reload === true) {
         userService.navigation().then((resp) => {
           if (typeof resp !== "undefined") {
@@ -81,6 +81,9 @@ export default {
         store.commit('navigation/' + NAVIGATION.CLEAR)
       }
     });
+  },
+  beforeDestroy() {
+    this.unwatch()
   }
 }
 
