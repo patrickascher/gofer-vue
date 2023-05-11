@@ -313,8 +313,6 @@ export default {
       :single-line="singleLine"
       :multiple="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple"
       :chips="isType(FieldType.ManyToMany)||isType(FieldType.MultiSelect)||isMultiple||chips"
-      :small-chips="smallChips"
-
       :deletable-chips="isMultiple"
       :small-chips="isMultiple"
       v-model="fieldValue"

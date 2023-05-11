@@ -13,7 +13,6 @@ import InputHasMany from '@/lib-components/grid/inputs/HasMany'
 import InputBool from '@/lib-components/grid/inputs/Bool'
 import InputFile from '@/lib-components/grid/inputs/File'
 
-
 import {FieldType} from '@/lib-components/grid/inputs/Base'
 import {FieldComponent, MODE_CREATE, MODE_TABLE, MODE_UPDATE} from '@/lib-components/grid/common'
 import {isEqual} from 'lodash';
@@ -328,7 +327,7 @@ export default {
       </v-row>
 
       <!-- Form Data -->
-      <v-form ref="form" v-if="!itemNotFound" v-model="valid">
+      <v-form ref="form" class="mb-5" v-if="!itemNotFound" v-model="valid">
 
         <!-- This is just a placeholder for a flowing layout. must be configurable at some point. -->
       <v-row v-if="1==2">

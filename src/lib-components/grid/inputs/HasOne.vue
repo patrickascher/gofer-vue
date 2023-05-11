@@ -172,8 +172,11 @@ export default {
 
           <!-- READ ONLY -->
           <td v-if="isReadOnly()&&!head.remove" v-show="!isHidden()" v-for="(head) in sortFields" :key="head.name">
-            <component v-if="head.view" :api="api"
-                       :field="head"
+
+         <component :api="api"
+                    :style="cssStyle(head)"
+                    :field="head"
+                       :readOnly="true"
                        :parent="field"
                        :parentData="fieldValue"
                        :index="index"

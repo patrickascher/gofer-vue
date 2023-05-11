@@ -60,7 +60,6 @@ export function HistoryToString(value){
           let _rv =""
           if (typeof child.Index!=="undefined"){
             _rv += "(" + (child.Index+1) + ") "
-
           }
 
           if (typeof oldValue === 'undefined' || oldValue===null) {
@@ -261,6 +260,6 @@ export default {
           <v-card-text> {{ $t('HISTORY.NoDataText') }}</v-card-text>
         </v-card>
       </v-timeline-item>
-
+    </v-timeline>
   </v-card>
 </template>
