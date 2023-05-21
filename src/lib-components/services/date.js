@@ -1,6 +1,11 @@
 export const dateService = {
-    UTCToLocal
+    UTCToLocal,
+    GolangDate
 };
+
+function GolangDate(date){
+    return new Date(Date.parse(date));
+}
 
 function UTCToLocal(date) {
     if (date===null){

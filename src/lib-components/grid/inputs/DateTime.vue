@@ -18,6 +18,7 @@ export default {
   props:[
     "fromTo",
       "isFilter",
+      "min"
   ],
   data() {
     return {
@@ -267,7 +268,7 @@ export default {
           ></v-text-field>
         </template>
 
-        <v-date-picker :max="maxFrom" v-model="datepickerValueFrom" @input="displayMenuFrom = false"></v-date-picker>
+        <v-date-picker :min=min :max="maxFrom" v-model="datepickerValueFrom" @input="displayMenuFrom = false"></v-date-picker>
       </v-menu>
 
         </v-col>
@@ -323,7 +324,6 @@ export default {
               :clearable="fromTo||clearable"
           ></v-text-field>
         </template>
-
         <v-date-picker :min="minTo" v-model="datepickerValueTo" @input="displayMenuTo = false"></v-date-picker>
       </v-menu>
       </v-col>

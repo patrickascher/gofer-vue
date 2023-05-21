@@ -212,6 +212,7 @@ export default {
 
           head.tmpTitle = head.title // needed for the translation to reg. changes.
 
+
           if (head.primary === true) {
             if (this.item == null || this.item[head.name] === 0) {
               this.itemNotFound = true;
@@ -329,6 +330,9 @@ export default {
       <!-- Form Data -->
       <v-form ref="form" class="mb-5" v-if="!itemNotFound" v-model="valid">
 
+        <slot :getFieldComponent=getFieldComponent :viewOptions=viewOptions :checkChanges=checkChanges :snapshot="snapshotItem" :item=item :headers="headersNotHidden" name="EditContent">
+
+
         <!-- This is just a placeholder for a flowing layout. must be configurable at some point. -->
       <v-row v-if="1==2">
               <v-col v-show="!field.hidden" v-for="(field) in headersNotHidden" :key="field.position+field.name">
@@ -347,6 +351,7 @@ export default {
                        :is="getFieldComponent(field)"></component>
           </v-col>
         </v-row>
+        </slot>
 
       </v-form>
 

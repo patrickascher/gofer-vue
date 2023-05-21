@@ -32,23 +32,51 @@ export default {
   },
   computed: {
     fieldValue: {
+      //TODO
+      /*
+       // if text + Multiple Select
+          // convert to number or string (depending on underlaying type)
+          if(head.type==="Select" &&  _.get(head,"options.select.0.Multiple",false) && typeof this.item[head.name]==="string"){
+            let castNumber = false
+            if (typeof _.get(head,"options.select.0.Items.0.value",0)==="number"){
+              castNumber=true
+            }
+            if (castNumber){
+              this.item[head.name]  =  this.item[head.name].split(",").map(Number);
+            }else{
+              this.item[head.name]  =  this.item[head.name].split(",")
+            }
+          }
+       */
+
+
       get() {
         if (typeof this.value === "string" && (this.field.type==="MultiSelect" || this.isMultiple)) {
           if (this.value===""){
             this.fieldValue=[]
             this.snapshot[this.field.name]=[]
           }else{
-            this.fieldValue = this.value.split(",")
-            this.snapshot[this.field.name]=this.value.split(",") //? WHY
+            // nedded because the db entry is a string.
+            this.snapshot[this.field.name]=this.value.split(",")
+            if (typeof _.get(this.field,"options.select.0.Items.0.value",0)==="number"){
+              return this.value.split(",").map(Number);
+            }else{
+              return  this.value.split(",")
+            }
           }
         }
-        return this.value;
+        return this.value
       },
       set(newValue) {
-        this.$emit('input', newValue);
+
+
+        if (typeof this.value === "string" && (this.field.type==="MultiSelect" || this.isMultiple)) {
+          newValue = newValue.join(",")
+        }
+
+          this.$emit('input', newValue);
         if (Array.isArray(newValue)) {
-          // needed somehow, computed item was not triggered.
-          this.$emit('changes');
+            this.$emit('changes');
         }
       }
     },

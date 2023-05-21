@@ -109,6 +109,7 @@ user:{},
         detail: true,
         update: true,
         delete: true,
+        actionRow:true,
       },
     }
   },
@@ -169,7 +170,7 @@ user:{},
       return this.headers.length !== 0
     },
     showAction() {
-      return (this.config.details || this.config.update || this.config.delete)
+      return this.config.actionRow && (this.config.details || this.config.update || this.config.delete)
     },
 
     /**
@@ -405,6 +406,7 @@ user:{},
           this.config.detail = !_.get(resp.data, "config.action.disableDetail", false)
           this.config.update = !_.get(resp.data, "config.action.disableUpdate", false)
           this.config.delete = !_.get(resp.data, "config.action.disableDelete", false)
+          this.config.actionRow = !_.get(resp.data, "config.action.disableActionRow", false)
 
           // filter
           this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", 10)
@@ -701,7 +703,7 @@ user:{},
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="2">
+      <v-col>
         <v-skeleton-loader
             v-if="vuetifyLoading&&!initLoaded"
             max-width="300"
@@ -710,7 +712,7 @@ user:{},
         ></v-skeleton-loader>
 
         <v-btn
-            v-if="config.create&&config.createLinks==null&&(!vuetifyLoading||initLoaded)"
+            v-if="config.actionRow&&config.create&&config.createLinks==null&&(!vuetifyLoading||initLoaded)"
             color="primary"
             small
             class="mr-2"
@@ -719,6 +721,8 @@ user:{},
           <span v-if="config.createTitle===null">{{ $t('COMMON.Add') }}</span>
           <span v-else>{{ $t(config.createTitle) }}</span>
         </v-btn>
+        <slot :initLoaded="initLoaded" name="HeaderRowNextToAdd"></slot>
+
 
         <v-menu offset-y v-if="config.createLinks!=null">
           <template v-slot:activator="{ on, attrs }">
@@ -742,11 +746,10 @@ user:{},
             </v-list-item>
           </v-list>
         </v-menu>
-
-
       </v-col>
-      <v-spacer cols="1"></v-spacer>
-      <v-col cols="9" align="end">
+
+      <v-spacer></v-spacer>
+      <v-col align="end">
         <v-skeleton-loader
             v-if="vuetifyLoading&&!initLoaded"
             max-width="40"
@@ -925,7 +928,7 @@ user:{},
         <tr style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :additionalPass="additionalPass" :additional="additional" :config="config" :header="header" :parent-data="item" :api="api" :is="header.view"></component>
+              <component v-model="item[header.name]" :additionalPass="additionalPass" :additional="additional" :config="config" :header="header" :parent="headers" :parent-data="item" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]">
