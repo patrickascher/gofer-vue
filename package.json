@@ -1,7 +1,7 @@
 {
   "name": "gofer-vue",
   "description": "Vue implementation for gofer backend.",
-  "version": "1.0.78",
+  "version": "1.0.79",
   "author": "Patrick Ascher <development@fullhouse-productions.com>",
   "license": "MIT",
   "repository": "github:patrickascher/gofer-vue",

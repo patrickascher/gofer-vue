@@ -579,15 +579,6 @@ user:{},
             _this.additional[ad] = resp.data[ad]
           });
         }
-      /*  var arr = ['three', 'seven', 'eleven'];
-
-// Remove item 'seven' from array
-        var filteredArray = arr.filter(function(e) { return e !== 'seven' })
-//=> ["three", "eleven"]
-
-// In ECMA6 (arrow function syntax):
-        var filteredArray = arr.filter(e => e !== 'seven')
-*/
 
       }).catch((error) => {
         this.vuetifyLoading = false; // reset vuetify loading indicator
@@ -721,7 +712,9 @@ user:{},
           <span v-if="config.createTitle===null">{{ $t('COMMON.Add') }}</span>
           <span v-else>{{ $t(config.createTitle) }}</span>
         </v-btn>
-        <slot :initLoaded="initLoaded" name="HeaderRowNextToAdd"></slot>
+
+
+        <slot :additional="additional" :initLoaded="initLoaded" name="HeaderRowNextToAdd"></slot>
 
 
         <v-menu offset-y v-if="config.createLinks!=null">
