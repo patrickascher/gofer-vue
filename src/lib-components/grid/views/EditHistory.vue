@@ -89,7 +89,6 @@ export function HistoryToString(value){
     });
     return rv
   } catch (e) {
-    console.log(e)
     // normal text
     return value;
   }

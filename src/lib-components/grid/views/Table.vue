@@ -54,7 +54,7 @@ export default {
     VListItemGroup,
     UserFilter
   },
-  props: {api: String,closedFilter:Boolean,dense:Boolean,additionalPass:Object},
+  props: {api: String,closedFilter:Boolean,dense:Boolean,additionalPass:Object,itemClass:Function},
   data() {
     return {
       refreshHeader: [], // needed for reloading the headers
@@ -918,7 +918,7 @@ user:{},
 
       <!-- Table Items -->
       <template v-slot:item="{ item }">
-        <tr style="white-space: nowrap;">
+        <tr :class="(typeof itemClass==='function'?itemClass(item):null)" style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
               <component v-model="item[header.name]" :additionalPass="additionalPass" :additional="additional" :config="config" :header="header" :parent="headers" :parent-data="item" :api="api" :is="header.view"></component>
