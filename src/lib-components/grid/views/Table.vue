@@ -669,6 +669,9 @@ user:{},
 <template>
   <v-flex>
 
+    <slot :additional="additional" :initLoaded="initLoaded" name="Prepend"></slot>
+
+
     <v-row v-if="!config.disableTitle">
       <v-col cols="auto"
              class="mr-auto">
@@ -714,7 +717,7 @@ user:{},
         </v-btn>
 
 
-        <slot :additional="additional" :initLoaded="initLoaded" name="HeaderRowNextToAdd"></slot>
+        <slot :additional="additional" :config="config" :initLoaded="initLoaded" name="HeaderRowNextToAdd"></slot>
 
 
         <v-menu offset-y v-if="config.createLinks!=null">
@@ -879,6 +882,8 @@ user:{},
         class="mt-4"
         type="table-thead, table-tbody"
     ></v-skeleton-loader>
+
+    <slot :additional="additional" :initLoaded="initLoaded" name="BeforeTable"></slot>
 
     <!-- data grid -->
     <v-data-table

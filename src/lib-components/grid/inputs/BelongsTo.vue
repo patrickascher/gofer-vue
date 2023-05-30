@@ -56,7 +56,7 @@ export default {
             this.fieldValue=[]
             this.snapshot[this.field.name]=[]
           }else{
-            // nedded because the db entry is a string.
+            // needed because the db entry is a string.
             this.snapshot[this.field.name]=this.value.split(",")
             if (typeof _.get(this.field,"options.select.0.Items.0.value",0)==="number"){
               return this.value.split(",").map(Number);
@@ -69,8 +69,8 @@ export default {
       },
       set(newValue) {
 
-
-        if (typeof this.value === "string" && (this.field.type==="MultiSelect" || this.isMultiple)) {
+        // type object is wrong - a real db type indicator is required because a set can also be a database int in value...
+        if ((typeof this.value === "string"||typeof this.value === "object")&& (this.field.type==="MultiSelect" || this.isMultiple)) {
           newValue = newValue.join(",")
         }
 

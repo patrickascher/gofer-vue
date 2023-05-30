@@ -80,6 +80,9 @@ export default {
     historyAllowed:function() {
       return !_.get(this.config, 'history.disable', false) && !_.get(this.config, 'history.hide', false)
     },
+    redirect:function(){
+      return !_.get(this.config, 'action.disableRedirect', false)
+    },
     mode: function () {
       if (typeof this.currentRoute.params === "undefined" || typeof this.currentRoute.params.pathMatch === "undefined") {
         return MODE_TABLE
@@ -268,7 +271,14 @@ export default {
       }).then((resp) => {
         this.loading = false;
         store.commit('alert/' + ALERT.SUCCESS, this.$t('GRID.ItemSaved'));
-        this.backToGrid()
+
+        if(this.redirect){
+          this.backToGrid()
+        }else{
+          this.getData() // load fresh data
+        }
+
+
       }).catch((error) => {
         this.loading = false;
         store.commit('alert/' + ALERT.ERROR, error);
