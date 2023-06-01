@@ -18,7 +18,8 @@ import {
   VTextField,
   VDialog,
 VDivider,
-VListItemGroup
+VListItemGroup,
+    VSelect
 } from 'vuetify/lib'
 import {http} from '@/lib-components/services/http'
 import {Config} from "@/lib-components";
@@ -40,6 +41,7 @@ export default {
     VListItemTitle,
     VTextField,
     InputDateTime,
+    VSelect,
     VIcon,
     VBtn,
     VFlex,
@@ -68,6 +70,7 @@ export default {
 user:{},
 
       // Items from the backend.
+      itemsOrig:[],
       items: [],
       itemsTotal: 0,
       // vuetify pagination object
@@ -198,6 +201,12 @@ user:{},
   },
 
   methods: {
+    hasSelect(header){
+      return _.get(header,'options.select.0.Items',false)
+    },
+    selectTextTranslation(item) {
+      return this.$t(_.get(item,"text",''))
+    },
     callbacks(v,h){
       if (v===null){
         return ""
@@ -514,6 +523,10 @@ user:{},
           }
 
         }
+
+        // data without decoration
+        this.itemsOrig = (resp.data.data == null) ? [] : JSON.parse(JSON.stringify(resp.data.data));
+
 
         if (this.headers.length > 0) {
           for (let i = 0; i < this.headers.length; i++) {
@@ -914,19 +927,30 @@ user:{},
                 v-slot:body.prepend="{ headers }">
         <tr>
           <td class="px-2" style="vertical-align: top;" v-for="header in headers">
-            <v-text-field @change="addQuickfilter"  v-if="header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" single-line dense
-                          v-model="filter.values[header.name]"></v-text-field>
+
+            <!-- Normal fields -->
+            <div v-if="!hasSelect(header)&&header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" >
+              <v-text-field @change="addQuickfilter" single-line dense
+                            v-model="filter.values[header.name]"></v-text-field>
+            </div>
+
+            <!-- Select fields -->
+            <div v-if="hasSelect(header)">
+              <v-select :item-text="selectTextTranslation" @change="addQuickfilter" v-model="filter.values[header.name]" dense clearable :items="header.options.select[0].Items" ></v-select>
+            </div>
+
+            <!-- Date fields -->
            <input-date-time class="ma-2" dense single-line :from-to="true" v-if="header.filterable&&header.type==='Date'||header.filterable&&header.type==='DateTime'" @input="addQuickfilter" :field="header" v-model="filter.values[header.name]"></input-date-time>
           </td>
         </tr>
       </template>
 
       <!-- Table Items -->
-      <template v-slot:item="{ item }">
+      <template v-slot:item="{ index,item }">
         <tr :class="(typeof itemClass==='function'?itemClass(item):null)" style="white-space: nowrap;">
           <td class="pt-3" valign="top" v-for="header in headersNotHidden" :key="`item-${header.name}`">
             <div v-if="hasOwnView(header)">
-              <component v-model="item[header.name]" :additionalPass="additionalPass" :additional="additional" :config="config" :header="header" :parent="headers" :parent-data="item" :api="api" :is="header.view"></component>
+              <component  v-model="item[header.name]" :additionalPass="additionalPass" :additional="additional" :config="config" :header="header" :parent="headers" :parent-data-orig="itemsOrig[index]" :parent-data="item" :api="api" :is="header.view"></component>
             </div>
 
             <div v-else-if="noEscaping(header)" v-html="item[header.name]">

@@ -16,7 +16,7 @@ import {FieldComponent} from '@/lib-components/grid/common'
 export default {
   extends: InputBase,
   mixins: [validation],
-  props: ['api', 'options', 'snapshot'],
+  props: ['api', 'options', 'snapshot','prepend'],
   components: {
     InputIntegerText,
     InputTextArea,
@@ -97,7 +97,12 @@ export default {
         if (this.fieldValue == null) {
           this.fieldValue = [obj]
         } else {
-          this.fieldValue.push(obj);
+          console.log("pre:",this.prepend)
+          if (this.prepend){
+            this.fieldValue.unshift(obj);
+          }else{
+            this.fieldValue.push(obj);
+          }
         }
       }
     },

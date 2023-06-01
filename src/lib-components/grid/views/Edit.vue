@@ -324,8 +324,7 @@ export default {
                     v-model="showHistory"
                     persistent
                     fullscreen
-                    hide-overlay
-                    transition="dialog-bottom-transition">
+                    hide-overlay>
             <template v-slot:activator="{ on, attrs }">
 
               <v-btn v-on="on" small color="primary">
