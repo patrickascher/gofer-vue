@@ -261,7 +261,7 @@ export default {
               <v-form v-show="showForgotPassword" class="pa-1">
                 <v-text-field
                     v-model="formForgotPassword.username"
-                    :label="$t('COMMON.Login')"
+                    :label="$t('COMMON.ResetLogin')"
                     :error-messages="usernameErrors('formForgotPassword','username')"
                     :disabled="forgotPasswordDisabled"
                     @input="$v.formForgotPassword.username.$touch()"
