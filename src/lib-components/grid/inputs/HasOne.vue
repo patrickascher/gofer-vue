@@ -97,7 +97,6 @@ export default {
         if (this.fieldValue == null) {
           this.fieldValue = [obj]
         } else {
-          console.log("pre:",this.prepend)
           if (this.prepend){
             this.fieldValue.unshift(obj);
           }else{
