@@ -121,9 +121,6 @@ user:{},
 
     // get local data
    this.copyLocalStorageFilter()
-    console.log("created",this.pagination,this.filter)
-
-
     this.user = store.getters['user/' + USER.GET_DATA]
     this.unwatch = store.watch(state => state.grid.reload, () => {
       if (store.state.grid.reload === true) {
@@ -455,6 +452,8 @@ user:{},
           this.config.filter.disable = _.get(resp.data, "config.filter.disable", false)
           this.config.filter.disableCustomFilter = _.get(resp.data, "config.filter.disableCustomFilter", false)
           this.config.filter.disableQuickFilter = _.get(resp.data, "config.filter.disableQuickFilter", false)
+          this.config.filter.persistent = _.get(resp.data, "config.filter.persistent", false)
+
         }
 
 
