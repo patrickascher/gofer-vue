@@ -280,6 +280,17 @@ export default {
         this.loading = false;
       });
     },
+    headerByID:function(id){
+     return _.find(this.headersNotHidden,el => el.name === id)
+    },
+    hasSelect:function(id){
+      let field = this.headerByID(id)
+      let select = _.get(field,"options.select.0.Items")
+      if (typeof select === "undefined"){
+        return false
+      }
+      return select
+    },
     addSortEntry: function () {
       let obj = {Key: null, Pos: null, Desc: null};
       this.item.Sorting.push(obj)
@@ -366,6 +377,13 @@ export default {
           {value: 'NULL', text: this.$t('GRID.Filter.Null')},
           {value: 'NOTNULL', text: this.$t('GRID.Filter.NotNull')},
         ]
+      }
+      if (this.hasSelect(el.Key)) {
+        return [
+          {value: '=', text: this.$t('GRID.Filter.Equal')},
+          {value: '!=', text: this.$t('GRID.Filter.NotEqual')},
+          {value: 'NULL', text: this.$t('GRID.Filter.Null')},
+          {value: 'NOTNULL', text: this.$t('GRID.Filter.NotNull')}]
       }
       return [
         {value: '=', text: this.$t('GRID.Filter.Equal')},
@@ -651,9 +669,19 @@ export default {
                                 v-model="item.Filters[index].Op"></v-select>
                     </td>
                     <td>
+
                       <template v-if="!disableValueField(item.Filters[index])">
+
+                        <v-select
+                            v-if="hasSelect(item.Filters[index].Key)!==false"
+                            v-model="item.Filters[index].Value"
+                            :items="hasSelect(item.Filters[index].Key)"
+                            :rules="[v => !!v || $t('COMMON.Required')]"
+                        >
+                        </v-select>
+
                         <v-text-field
-                            v-if="!isDateField(item.Filters[index]) && item.Filters[index].Op!=='IN' && item.Filters[index].Op!=='NOTIN'"
+                            v-else-if="!isDateField(item.Filters[index]) && item.Filters[index].Op!=='IN' && item.Filters[index].Op!=='NOTIN'"
                             label="Value"
                             :rules="[v => !!v || $t('COMMON.Required')]"
                             required

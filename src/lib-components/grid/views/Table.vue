@@ -104,6 +104,7 @@ user:{},
           openQuickFilter: null,
           allowedRowsPerPage: [],
           rowsPerPage: null,
+          persistent:false,
         },
         export: [],
         create: true,
@@ -117,8 +118,13 @@ user:{},
     }
   },
   created() {
-    this.user = store.getters['user/' + USER.GET_DATA]
 
+    // get local data
+   this.copyLocalStorageFilter()
+    console.log("created",this.pagination,this.filter)
+
+
+    this.user = store.getters['user/' + USER.GET_DATA]
     this.unwatch = store.watch(state => state.grid.reload, () => {
       if (store.state.grid.reload === true) {
         this.getData("pagination")
@@ -249,6 +255,7 @@ user:{},
     },
     removeFilter() {
       this.filter.values = {}
+      this.deleteLocalStorageFilter()
       this.addQuickfilter()
     },
     getValue(item,field, decorator, separator) {
@@ -371,8 +378,27 @@ user:{},
       }
       return encodeURI(this.api + head + limit+ "/page/" + this.pagination.page + order + filter + filterCust)
     },
+    addLocalStorageFilter(){
+      if(this.config.filter.persistent){
+        sessionStorage.setItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path, JSON.stringify({"filterID":this.config.userActiveFilter.id,"pagination":this.pagination,"filters":this.filter.values}));
+      }
+    },
+    deleteLocalStorageFilter(){
+      sessionStorage.removeItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
+    },
+    copyLocalStorageFilter(){
+      let filter = sessionStorage.getItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
+          if(filter!==null){
+            filter=JSON.parse(filter)
+            this.config.userActiveFilter.id=filter.filterID
+            this.pagination=filter.pagination
+            this.filter.values=filter.filters
+            this.filter.lastValues=filter.filters
+          }
+    },
     addQuickfilter() {
       if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
+        this.addLocalStorageFilter()
         // reset pagination
         this.pagination.itemsPerPage = 10
         this.pagination.page = 1
@@ -605,6 +631,7 @@ user:{},
 
     },
     applyFilter() {
+      this.addLocalStorageFilter()
       // RESET group and sort
       this.pagination.sortBy = []
       this.pagination.sortDesc = []
