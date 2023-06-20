@@ -144,6 +144,7 @@ user:{},
           newVal.sortBy !== oldVal.sortBy ||
           newVal.sortDesc !== oldVal.sortDesc
       ) {
+        this.addLocalStorageFilter()
         this.getData()
       }
     },
@@ -300,7 +301,6 @@ user:{},
           rv.push("")
         }
       });
-
       return rv.join(separator)
     },
     hasOwnView(header) {
@@ -395,10 +395,10 @@ user:{},
     },
     addQuickfilter() {
       if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
-        this.addLocalStorageFilter()
         // reset pagination
         this.pagination.itemsPerPage = 10
         this.pagination.page = 1
+        this.addLocalStorageFilter()
         this.getData("pagination") //pagination must be reloaded wiht a filter
         this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
       }
@@ -442,6 +442,7 @@ user:{},
 
           // filter
           this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", 10)
+          this.copyLocalStorageFilter()
           this.config.filter.allowedRowsPerPage = _.get(resp.data, "config.filter.allowedRowsPerPage", [5, 10, 15, 25, 50, 100, 500])
           // open filter bar if a filter is set or configured so.
           if ((url.includes("filter/") || url.includes("filter_")) && this.closedFilter!==true) {
@@ -630,13 +631,13 @@ user:{},
 
     },
     applyFilter() {
-      this.addLocalStorageFilter()
       // RESET group and sort
       this.pagination.sortBy = []
       this.pagination.sortDesc = []
       this.pagination.groupBy = []
       this.pagination.groupDesc = []
       this.pagination.itemsPerPage = 10
+      this.addLocalStorageFilter()
       this.getData(true)
     },
     /**
