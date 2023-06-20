@@ -381,8 +381,7 @@ user:{},
       }
     },
     deleteLocalStorageFilter(){
-      sessionStorage.setItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path, JSON.stringify({"pagination":this.pagination}));
-      //sessionStorage.removeItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
+      sessionStorage.removeItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
     },
     copyLocalStorageFilter(){
       let filter = sessionStorage.getItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
