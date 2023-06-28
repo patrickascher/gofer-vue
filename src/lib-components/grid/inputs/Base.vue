@@ -24,7 +24,7 @@ export default {
    * field - {obj} includes the field information from the backend
    * value - is the v-model of the component
    */
-  props: ["field","readOnly", "value", "translations","disabled", "outlined","clearable", "dense","chips","singleLine","smallChips", "filled", "hint", "rows", "rowHeight"],
+  props: ["noLabel","field","readOnly", "value", "translations","disabled", "outlined","clearable", "dense","chips","singleLine","smallChips", "filled", "hint", "rows", "rowHeight"],
   data() {
     return {
       FieldType: FieldType
@@ -77,6 +77,9 @@ export default {
      * @returns {function(*=): string}
      */
     getLabel: function () {
+      if(this.noLabel){
+        return null
+      }
       return this.required === true ? this.$t(this.field.title) + ' *' : this.$t(this.field.title);
     },
     getWidth: function(){
