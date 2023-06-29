@@ -56,7 +56,7 @@ export default {
     VListItemGroup,
     UserFilter
   },
-  props: {api: String,closedFilter:Boolean,dense:Boolean,additionalPass:Object,itemClass:Function},
+  props: {disableFilterPersistent:Boolean,api: String,closedFilter:Boolean,dense:Boolean,additionalPass:Object,itemClass:Function},
   data() {
     return {
       refreshHeader: [], // needed for reloading the headers
@@ -385,7 +385,7 @@ user:{},
     },
     copyLocalStorageFilter(){
       let filter = sessionStorage.getItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
-          if(filter!==null){
+          if(filter!==null && this.disableFilterPersistent!==true){
             filter=JSON.parse(filter)
             this.config.userActiveFilter.id=filter.filterID
             this.pagination=filter.pagination
