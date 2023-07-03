@@ -393,13 +393,17 @@ user:{},
             this.filter.lastValues=filter.filters
           }
     },
+    addQuickfilterWithTimeout(){
+      let _this = this
+      setTimeout(() => {_this.addQuickfilter()}, 50)
+    },
     addQuickfilter() {
       if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
         // reset pagination
-        this.pagination.itemsPerPage = 10
+        //this.pagination.itemsPerPage = 10
         this.pagination.page = 1
         this.addLocalStorageFilter()
-        this.getData("pagination") //pagination must be reloaded wiht a filter
+        this.getData("pagination") //pagination must be reloaded with a filter
         this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
       }
     },
@@ -957,7 +961,7 @@ user:{},
 
             <!-- Normal fields -->
             <div v-if="!hasSelect(header)&&header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" >
-              <v-text-field @change="addQuickfilter" single-line dense
+              <v-text-field clearable @click:clear="addQuickfilterWithTimeout" @change="addQuickfilter" single-line dense
                             v-model="filter.values[header.name]"></v-text-field>
             </div>
 
