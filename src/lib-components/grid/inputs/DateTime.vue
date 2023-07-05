@@ -268,7 +268,7 @@ export default {
           ></v-text-field>
         </template>
 
-        <v-date-picker :min=min :max="maxFrom" v-model="datepickerValueFrom" @input="displayMenuFrom = false"></v-date-picker>
+        <v-date-picker first-day-of-week="1" :min=min :max="maxFrom" v-model="datepickerValueFrom" @input="displayMenuFrom = false"></v-date-picker>
       </v-menu>
 
         </v-col>
@@ -324,7 +324,7 @@ export default {
               :clearable="fromTo||clearable"
           ></v-text-field>
         </template>
-        <v-date-picker :min="minTo" v-model="datepickerValueTo" @input="displayMenuTo = false"></v-date-picker>
+        <v-date-picker first-day-of-week="1" :min="minTo" v-model="datepickerValueTo" @input="displayMenuTo = false"></v-date-picker>
       </v-menu>
       </v-col>
       <v-col v-if="isType(FieldType.DateTime) && !fromTo" md="6">
