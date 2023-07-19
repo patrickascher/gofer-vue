@@ -260,7 +260,7 @@ export default {
               :placeholder="getFilterDateLabel('DateFrom')"
               prepend-icon="mdi-calendar"
               readonly
-              :rules="(fromTo?null:rules)"
+              :rules="(fromTo?[]:rules)"
               v-on="on"
               :dense="dense"
               :clearable="fromTo||clearable"
@@ -284,7 +284,7 @@ export default {
                         prepend-icon="mdi-clock-outline"
                         return-masked-value
                         :disabled="isReadOnly()||isType(FieldType.DateTime)&&datepickerValueFrom==null"
-                        :rules="(fromTo?null:rules)"
+                        :rules="(fromTo?[]:rules)"
                         :dense="dense"
                         :filled="filled"
                         v-mask="field.seconds?'##:##:##':'##:##'"
@@ -317,7 +317,7 @@ export default {
               :placeholder="getFilterDateLabel('DateTo')"
               prepend-icon="mdi-calendar"
               readonly
-              :rules="(fromTo?null:rules)"
+              :rules="(fromTo?[]:rules)"
               v-on="on"
               :dense="dense"
               :filled="filled"
@@ -339,7 +339,7 @@ export default {
                         prepend-icon="mdi-clock-outline"
                         return-masked-value
                         :disabled="isReadOnly()||isType(FieldType.DateTime)&&datepickerValueTo==null"
-                        :rules="(fromTo?null:rules)"
+                        :rules="(fromTo?[]:rules)"
                         :dense="dense"
                         :filled="filled"
                         v-mask="field.seconds?'##:##:##':'##:##'"
