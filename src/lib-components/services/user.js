@@ -136,6 +136,13 @@ function setRedirectPath(path) {
 }
 
 function redirectAfterLoginPath() {
+
+    let redirect = store.getters['user/' + USER.REDIRECT]
+    if(redirect!==null&& redirect!==""&&redirect!==UrlLogin){
+        store.commit("user/" + USER.REDIRECT, null);
+        return redirect
+    }
+
     return UrlAfterLogin
 }
 
