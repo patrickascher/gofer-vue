@@ -46,17 +46,23 @@ export var validation = {
                         return true;
                     }
 
-                    let emailAddr=""
+                    let emailDomains = []
                     if (key.indexOf('emailDomain:') !== -1){
-                        emailAddr = "@"+key.split(':')[1]
-                        emailAddr = emailAddr+"."+key.split(':')[2]
+
+                        let domains = key.replace('emailDomain:','').split(";")
+                        domains.forEach((function (value){
+                            let emailAddrTmp = "@"+value.split(':')[0]
+                            emailAddrTmp = emailAddrTmp+"."+value.split(':')[1]
+                            emailDomains.push(emailAddrTmp)
+                        }))
+
                         key= "emailDomain"
                     }
 
                     switch (key) {
-                        //emailDomain:domain:topleveldomain(emailDomain:example:com)
+                        //emailDomain:domain:topleveldomain(emailDomain:example:com,example2.com)
                         case "emailDomain":
-                            rules.push(emailDomain(this.value,emailAddr, "This email domain is not allowed!"));
+                            rules.push(emailDomain(this.value,emailDomains, "This email domain is not allowed!"));
                             break;
                         case "email":
                             if (!omitempty) { //needed because the backend throws an error if its empty and no omitempty is set
@@ -147,7 +153,19 @@ export const email = function (v, msg) {
 };
 
 export const emailDomain = function (v,domain, msg) {
-    return  (v != null &&v.indexOf(domain)!==-1?true:msg)
+
+    if (v===null){
+        return msg
+    }
+
+    let exists = false
+    domain.forEach((function(value){
+        if(v.indexOf(value)!==-1){
+            exists = true
+        }
+    }))
+
+    return  (exists?true:msg)
 };
 
 
