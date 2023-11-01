@@ -212,7 +212,7 @@ user:{},
       return this.$t(_.get(item,"text",''))
     },
     callbacks(v,h){
-      if (v===null){
+      if (v===null||typeof v === "undefined"){
         return ""
       }
       if (h.type === "Bool"){

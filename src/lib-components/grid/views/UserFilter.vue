@@ -382,6 +382,8 @@ export default {
         return [
           {value: '=', text: this.$t('GRID.Filter.Equal')},
           {value: '!=', text: this.$t('GRID.Filter.NotEqual')},
+          {value: 'IN', text: this.$t('GRID.Filter.In')},
+          {value: 'NOTIN', text: this.$t('GRID.Filter.NotIn')},
           {value: 'NULL', text: this.$t('GRID.Filter.Null')},
           {value: 'NOTNULL', text: this.$t('GRID.Filter.NotNull')}]
       }
@@ -677,6 +679,8 @@ export default {
                             v-model="item.Filters[index].Value"
                             :items="hasSelect(item.Filters[index].Key)"
                             :rules="[v => !!v || $t('COMMON.Required')]"
+                            :multiple="item.Filters[index].Op==='IN'||item.Filters[index].Op==='NOTIN'"
+                            :chips="item.Filters[index].Op==='IN'||item.Filters[index].Op==='NOTIN'"
                         >
                         </v-select>
 

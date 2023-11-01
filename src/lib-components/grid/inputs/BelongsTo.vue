@@ -241,6 +241,7 @@ export default {
         // unset loading + set data
         store.commit("selectValues/" + SELECT.SET_DATA, {'field': field, 'data': resp.data.data});
         store.commit("selectValues/" + SELECT.UNSET_LOADING, field);
+
         this.selectLoading = false;
       }).catch((err) => {
         // unset loading + unset data

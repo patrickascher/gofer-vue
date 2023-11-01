@@ -6,6 +6,9 @@ const state = {
 };
 
 const getters = {
+    [SELECT.GET_ALL_DATA]: state => {
+        return state.cache
+    },
     [SELECT.GET_DATA]: (state, field) => {
         return state.cache[field]
     },

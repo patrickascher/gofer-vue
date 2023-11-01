@@ -79,6 +79,8 @@ export var validation = {
                             this.required = true;
                             rules.push(required(this.value, "Field is mandatory"));
                             break;
+                        case "http_url":
+                            rules.push(isHttpUrl(this.value, "Url must start with http:// or https://"));
                         case "min":
                             switch (this.field.type) {
                                 case FieldType.Integer:
@@ -151,6 +153,18 @@ export const email = function (v, msg) {
     const email = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/gm;
     return (v != null && v.match(email) != null) ? true : msg;
 };
+
+export const isHttpUrl = function (v,msg){
+
+    let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+{}]*)*'+ // port and path
+        '(\\?[;&a-z\\d%_.~+=-{}]*)?'+ // query string
+        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+
+        return (pattern.test(v))?true:msg;
+}
 
 export const emailDomain = function (v,domain, msg) {
 

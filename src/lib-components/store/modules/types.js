@@ -30,6 +30,7 @@ export const GRID = {
 
 export const SELECT = {
     GET_DATA: 'SELECT_GET_DATA',
+    GET_ALL_DATA: 'SELECT_GET_ALL_DATA',
     SET_DATA: 'SELECT_SET_DATA',
     UNSET_DATA: 'SELECT_UNSET_DATA',
 

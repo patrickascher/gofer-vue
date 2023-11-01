@@ -57,3 +57,6 @@ export {i18n as i18n} from './services/i18n';
 
 // History
 export {HistoryToString as HistoryToString} from './grid/views/EditHistory.vue'
+
+// FILTER
+export {timeSince as FilterTimeSince} from './filter/timesince'

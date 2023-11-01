@@ -221,7 +221,7 @@ export default {
 
     <v-main>
       <v-container fill-height>
-        <v-layout>
+        <v-layout class="dash">
           <router-view :key="$route.path"></router-view>
         </v-layout>
       </v-container>

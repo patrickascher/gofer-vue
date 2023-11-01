@@ -56,6 +56,17 @@ export default {
     },
   },
   created: function () {
+    this.hrefPrivacy=this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF');
+    this.hrefImpress=this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF');
+    if(this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF')==='CONTROLLER.auth.Controller.Login.PrivacyHREF')
+    {
+      this.hrefPrivacy=" ";
+    }
+    if(this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF')==='CONTROLLER.auth.Controller.Login.ImpressHREF')
+    {
+      this.hrefImpress=" ";
+    }
+
     userService.navigation().then((resp) => {
       if (typeof resp !== "undefined") {
         this.sorted = resp.data.navigation;
@@ -109,6 +120,7 @@ export default {
       ></v-skeleton-loader>
       <template v-slot:append>
 
+        {{hrefPrivacy}}{{hrefImpress}}
         <v-list-item v-if="!navMini&&hrefPrivacy!==' '" dense target="_blank" :href="hrefPrivacy">
           <v-list-item-title>Privacy poilicy<br/>
           </v-list-item-title>
