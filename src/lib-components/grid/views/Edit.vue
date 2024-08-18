@@ -181,7 +181,6 @@ export default {
       this.loading = true;
 
       http.get(this.api).then((resp) => {
-
         // if no head was loaded by backend
         if (typeof resp.data.head == "undefined") {
           // TODO show some error message?
@@ -199,13 +198,13 @@ export default {
           //manipulation if a relation has a belongsTo field with Multiselect
           this.head.forEach((head) => {
             if (head.type === "hasMany") {
-              head.fields.forEach((field) => {
-                if(field.type==="MultiSelect"){
-                  this.item[head.name].forEach((data,i)=>{
-                    this.item[head.name][i][field.name] =  this.item[head.name][i][field.name].split(",")
-                  })
-                }
-              })
+                head.fields.forEach((field) => {
+                  if(field.type==="MultiSelect"){
+                    this.item[head.name].forEach((data,i)=>{
+                      this.item[head.name][i][field.name] =  this.item[head.name][i][field.name].split(",")
+                    })
+                  }
+                })
             }
           })
         }
@@ -378,7 +377,6 @@ export default {
       >
         {{ $t('COMMON.Back') }}
       </v-btn>
-
       <!-- Save Button -->
       <v-tooltip right>
         <template v-slot:activator="{ on }">

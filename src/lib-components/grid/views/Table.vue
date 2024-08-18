@@ -314,7 +314,10 @@ user:{},
       return false;
     },
     callExport(type) {
-      window.open(Config.get('webserver.domain').replace(/^\/|\/$/g, '') + "/" + this.backendUrl(true).replace(/^\/|\/$/g, '') + "/mode/export/type/" + type+"/lang/"+this.$i18n.locale);
+      window.open(this.exportUrl(type));
+    },
+    exportUrl(type) {
+      return Config.get('webserver.domain').replace(/^\/|\/$/g, '') + "/" + this.backendUrl(true).replace(/^\/|\/$/g, '') + "/mode/export/type/" + type+"/lang/"+this.$i18n.locale
     },
     /**
      * backendUrl is returning the backend api url with sort,filter and header information.
@@ -909,7 +912,7 @@ user:{},
             </v-btn>
           </template>
           <v-list>
-            <v-list-item dense @click="callExport(e.key)" :key="e.key" v-for="e in config.export">
+            <v-list-item v-if="typeof e.name!=='undefined'" dense @click="callExport(e.key)" :key="e.key" v-for="e in config.export">
               <v-list-item-title>
                 <v-icon dense>{{ e.icon }}</v-icon>
                 {{ e.name }}
@@ -917,6 +920,9 @@ user:{},
             </v-list-item>
           </v-list>
         </v-menu>
+
+        <slot :additional="additional" :exportUrl="exportUrl" :config="config" :initLoaded="initLoaded" name="HeaderRowEnd"></slot>
+
       </v-col>
     </v-row>
 
