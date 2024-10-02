@@ -25,6 +25,9 @@ export default {
       :dense="dense"
       :filled="filled"
       :outlined="outlined"
+      :loading="loading"
+
+      @change="$emit('field-enter', value)"
   >
   </v-switch>
 </template>

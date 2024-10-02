@@ -350,6 +350,9 @@ export default {
       :filled="filled"
       :return-object="returnObject"
       :outlined="outlined"
+
+      :ref="focus"
+      @change="$emit('field-enter', value)"
   >
   </v-select>
 

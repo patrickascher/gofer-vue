@@ -18,7 +18,7 @@ export default {
   methods: {
     keyhandlerInteger: function (event) {
       if (event.key === "e" || event.key === "+" || event.key === "E" || event.key === "," || event.key === ".") {
-        event.preventDefault();
+        //event.preventDefault();
       }
     },
   },
@@ -47,11 +47,16 @@ export default {
       :label="getLabel"
       :hint="field.description"
       :required="required"
+      :loading="loading"
       :counter="counter"
       :type="isType(FieldType.Text)||isType(FieldType.Password)?(email!==true?(isType(FieldType.Password)?'password':'text'):'email'):'number'"
-      @keydown="e => isType(FieldType.Integer) && keyhandlerInteger(e)"
-      :validate-on-blur="true"
 
+      :ref="focus"
+      @keydown="e => { isType(FieldType.Integer) && keyhandlerInteger(e); $emit('field-keydown', e); }"
+      @keyup.enter="$emit('field-enter', value)"
+      @blur="$emit('field-blur', value)"
+
+      :validate-on-blur="true"
       v-model.lazy="fieldValue"
       v-show="!isHidden()"
       :rules=rules

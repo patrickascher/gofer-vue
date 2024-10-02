@@ -24,10 +24,17 @@ export default {
    * field - {obj} includes the field information from the backend
    * value - is the v-model of the component
    */
-  props: ["noLabel","field","readOnly", "value", "translations","disabled", "outlined","clearable", "dense","chips","singleLine","smallChips", "filled", "hint", "rows", "rowHeight"],
+  props: ["loading","focus","noLabel","field","readOnly", "value", "translations","disabled", "outlined","clearable", "dense","chips","singleLine","smallChips", "filled", "hint", "rows", "rowHeight"],
   data() {
     return {
       FieldType: FieldType
+    }
+  },
+  mounted() {
+    if (this.focus){
+      this.$nextTick(() => {
+      console.log(this.focus, this.$refs[this.focus].focus())
+      this.$refs[this.focus].focus()});
     }
   },
   methods: {

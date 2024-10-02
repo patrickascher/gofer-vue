@@ -258,17 +258,18 @@ export default {
               v-model="datepickerValueFrom"
               :label="getFilterDateLabel('DateFrom')"
               :placeholder="getFilterDateLabel('DateFrom')"
-              prepend-icon="mdi-calendar"
+              :prepend-icon=" getFilterDateLabel('DateFrom')!==null ? 'mdi-calendar' : ''"
               readonly
               :rules="(fromTo?[]:rules)"
               v-on="on"
               :dense="dense"
               :clearable="fromTo||clearable"
               :filled="filled"
+              :ref="focus"
           ></v-text-field>
         </template>
 
-        <v-date-picker first-day-of-week="1" :min=min :max="maxFrom" v-model="datepickerValueFrom" @input="displayMenuFrom = false"></v-date-picker>
+        <v-date-picker first-day-of-week="1" :min=min :max="maxFrom" v-model="datepickerValueFrom" @input="displayMenuFrom = false;$emit('field-blur', value)"></v-date-picker>
       </v-menu>
 
         </v-col>

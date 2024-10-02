@@ -34,6 +34,10 @@ export default {
       :filled="filled"
       :outlined="outlined"
 
+      :ref="focus"
+      @keydown="e => { isType(FieldType.Integer) && keyhandlerInteger(e); $emit('field-keydown', e); }"
+      @keyup.enter="$emit('field-enter', value)"
+      @blur="$emit('field-blur', value)"
   >
   </v-textarea>
 </template>
