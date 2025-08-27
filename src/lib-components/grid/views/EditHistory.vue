@@ -27,6 +27,11 @@ export function HistoryToString(value){
       let oldValue = val.Old
       let childs = val.Children
 
+      if (typeof newValue === 'undefined' && typeof oldValue === 'undefined' && typeof childs === 'undefined'){
+        rv =  "<b>"+val.Field+"</b>"
+       return
+      }
+
       // normal fields
       if (typeof childs === 'undefined') {
         if (typeof oldValue === 'undefined' || oldValue===null) {

@@ -9,8 +9,7 @@ export default {
   data() {
     return {
       loading: true,
-      hrefPrivacy:this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF'),
-      hrefImpress:this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF'),
+
       items: {},
       drawer: true,
     }
@@ -20,7 +19,14 @@ export default {
     NavNode,
     VCard, VNavigationDrawer, VList, VSkeletonLoader, VListItem, VListItemTitle
   },
+
   computed: {
+    hrefPrivacy:function(){
+      return this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF');
+    },
+    hrefImpress:function(){
+      return this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF');
+    },
     sorted: {
       get: function () {
         return this.items ? _.sortBy(this.items, ["Position", "translated"]) : [];
@@ -56,16 +62,6 @@ export default {
     },
   },
   created: function () {
-    this.hrefPrivacy=this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF');
-    this.hrefImpress=this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF');
-    if(this.$t('CONTROLLER.auth.Controller.Login.PrivacyHREF')==='CONTROLLER.auth.Controller.Login.PrivacyHREF')
-    {
-      this.hrefPrivacy=" ";
-    }
-    if(this.$t('CONTROLLER.auth.Controller.Login.ImpressHREF')==='CONTROLLER.auth.Controller.Login.ImpressHREF')
-    {
-      this.hrefImpress=" ";
-    }
 
     userService.navigation().then((resp) => {
       if (typeof resp !== "undefined") {
@@ -120,7 +116,7 @@ export default {
       ></v-skeleton-loader>
       <template v-slot:append>
 
-        {{hrefPrivacy}}{{hrefImpress}}
+
         <v-list-item v-if="!navMini&&hrefPrivacy!==' '" dense target="_blank" :href="hrefPrivacy">
           <v-list-item-title>Privacy poilicy<br/>
           </v-list-item-title>
