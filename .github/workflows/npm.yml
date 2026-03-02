@@ -5,7 +5,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -17,23 +16,12 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # Optional: sanity info
-      - run: |
-          node -v
-          npm -v
-          npm whoami || true
-          npm config get registry
-
-      # Publish (and dump npm logs on failure)
-      - name: Publish to npm
+      - name: Verify npm auth
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          npm publish --access public
-        # If it fails, show npm debug logs
-      - name: Show npm logs on failure
-        if: failure()
-        run: |
-          echo "---- npm logs ----"
-          ls -la ~/.npm/_logs || true
-          tail -n 200 ~/.npm/_logs/* || true
+        run: npm whoami
+
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
