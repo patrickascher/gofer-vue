@@ -1,16 +1,40 @@
-on: push
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: 10
-      - run: npm install
+          node-version: 20
+          registry-url: "https://registry.npmjs.org/"
+
+      - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+
+      # Optional: sanity info
+      - run: |
+          node -v
+          npm -v
+          npm whoami || true
+          npm config get registry
+
+      # Publish (and dump npm logs on failure)
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish --access public
+        # If it fails, show npm debug logs
+      - name: Show npm logs on failure
+        if: failure()
+        run: |
+          echo "---- npm logs ----"
+          ls -la ~/.npm/_logs || true
+          tail -n 200 ~/.npm/_logs/* || true
