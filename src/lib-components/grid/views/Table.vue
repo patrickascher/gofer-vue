@@ -118,7 +118,6 @@ user:{},
     }
   },
   created() {
-
     // get local data
    this.copyLocalStorageFilter()
     this.user = store.getters['user/' + USER.GET_DATA]
@@ -137,12 +136,32 @@ user:{},
    * If a change happens, the data will get new requested.
    */
   watch: {
-    pagination: function (newVal, oldVal) {
-      if (_.get(oldVal, "page", false) === false ||
-          newVal.page !== oldVal.page ||
-          newVal.itemsPerPage !== oldVal.itemsPerPage ||
-          newVal.sortBy !== oldVal.sortBy ||
-          newVal.sortDesc !== oldVal.sortDesc
+    pagination(newVal, oldVal) {
+      // first run / not initialized yet
+      if (!oldVal || _.get(oldVal, "page", null) == null) {
+        this.addLocalStorageFilter()
+        this.getData()
+        return
+      }
+
+      const pageChanged = newVal.page !== oldVal.page
+      const itemsPerPageChanged = newVal.itemsPerPage !== oldVal.itemsPerPage
+
+      // IMPORTANT: compare arrays by VALUE, not by reference
+      const sortByChanged = !_.isEqual(newVal.sortBy || [], oldVal.sortBy || [])
+      const sortDescChanged = !_.isEqual(newVal.sortDesc || [], oldVal.sortDesc || [])
+
+      // optional if you also use these
+      const groupByChanged = !_.isEqual(newVal.groupBy || [], oldVal.groupBy || [])
+      const groupDescChanged = !_.isEqual(newVal.groupDesc || [], oldVal.groupDesc || [])
+
+      if (
+          pageChanged ||
+          itemsPerPageChanged ||
+          sortByChanged ||
+          sortDescChanged ||
+          groupByChanged ||
+          groupDescChanged
       ) {
         this.addLocalStorageFilter()
         this.getData()
@@ -420,6 +439,8 @@ user:{},
      * If an error happens, a ALERT.ERROR will get set.
      */
     getData(withHeader) {
+
+
       this.vuetifyLoading = true; // set vuetify loading indicator
       let url = this.backendUrl(withHeader)
       http.get(url).then((resp) => {
