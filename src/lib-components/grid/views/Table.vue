@@ -3,6 +3,7 @@ import {store} from '@/lib-components/store'
 import {ALERT, USER, NAVIGATION, GRID} from '@/lib-components/store/modules/types'
 import {
   VBtn,
+  VChip,
   VCol,
   VDataTable,
   VFlex,
@@ -17,9 +18,9 @@ import {
   VSpacer,
   VTextField,
   VDialog,
-VDivider,
-VListItemGroup,
-    VSelect
+  VDivider,
+  VListItemGroup,
+  VSelect
 } from 'vuetify/lib'
 import {http} from '@/lib-components/services/http'
 import {Config} from "@/lib-components";
@@ -40,6 +41,7 @@ export default {
     VListItem,
     VListItemTitle,
     VTextField,
+    VChip,
     InputDateTime,
     VSelect,
     VIcon,
@@ -67,7 +69,7 @@ export default {
       dialogFilterId:null,
       primaryKey: [],
       headers: [],
-user:{},
+      user:{},
 
       // Items from the backend.
       itemsOrig:[],
@@ -80,8 +82,10 @@ user:{},
       // filter data
       filter: {
         values: {},
-        lastValues: {},
+        zeroFields: [],
       },
+      lastQuickFilter: {values: {}, zeroFields: []},
+      quickFilterRevision: 0,
       additional:{},
       // backend config/default config will be generated
       config: {
@@ -119,7 +123,7 @@ user:{},
   },
   created() {
     // get local data
-   this.copyLocalStorageFilter()
+    this.copyLocalStorageFilter()
     this.user = store.getters['user/' + USER.GET_DATA]
     this.unwatch = store.watch(state => state.grid.reload, () => {
       if (store.state.grid.reload === true) {
@@ -170,21 +174,8 @@ user:{},
   },
   computed: {
     filterQuickAllowed() {
-      if (this.config.filter.disable) {
-        return false
-      }
-
-      if (this.config.filter.disableQuickFilter) {
-        return false
-      }
-
-      let filter = false;
-      _.forEach(this.headers, function (value) {
-        if (_.get(value, "filterable", false) !== false) {
-          filter = true;
-        }
-      });
-      return filter;
+      return !this.config.filter.disable && !this.config.filter.disableQuickFilter &&
+          this.headers.some(header => header.filterable || header.filterZeroValue)
     },
     filterCustomerAllowed() {
       if (this.config.filter.disable) {
@@ -271,7 +262,7 @@ user:{},
       }
     },
     removeFilter() {
-      this.filter.values = {}
+      this.filter = {values: {}, zeroFields: []}
       this.deleteLocalStorageFilter()
       this.addQuickfilter()
     },
@@ -338,6 +329,20 @@ user:{},
     exportUrl(type) {
       return Config.get('webserver.domain').replace(/^\/|\/$/g, '') + "/" + this.backendUrl(true).replace(/^\/|\/$/g, '') + "/mode/export/type/" + type+"/lang/"+this.$i18n.locale
     },
+    quickFilterPath() {
+      if (this.config.filter.disable || this.config.filter.disableQuickFilter) return ""
+      let path = ""
+      this.headers.forEach(header => {
+        const name = header.name
+        const value = this.filter.values[name]
+        if (header.filterZeroValue && this.filter.zeroFields.includes(name)) {
+          path += "/filterZero_" + name + "/1"
+        } else if (header.filterable && value != null && value !== "") {
+          path += "/filter_" + name + "/" + value
+        }
+      })
+      return path
+    },
     /**
      * backendUrl is returning the backend api url with sort,filter and header information.
      */
@@ -384,49 +389,57 @@ user:{},
         filter = "/filter/" + this.config.userActiveFilter.id
       }
 
-      let filterCust = ""
-      _.forEach(this.filter.values, function (value, index) {
-        if (value !== null && value !== "") {
-          filterCust += "/filter_" + index + "/" + value;
-        }
-      })
-
       let limit=""
       if (this.pagination.itemsPerPage!==0){
         limit="/limit/" + this.pagination.itemsPerPage
       }
-      return encodeURI(this.api + head + limit+ "/page/" + this.pagination.page + order + filter + filterCust)
+      return encodeURI(this.api + head + limit+ "/page/" + this.pagination.page + order + filter + this.quickFilterPath())
     },
     addLocalStorageFilter(){
-      if(this.config.filter.persistent){
-        sessionStorage.setItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path, JSON.stringify({"filterID":this.config.userActiveFilter.id,"pagination":this.pagination,"filters":this.filter.values}));
+      if (this.config.filter.persistent) {
+        const saved = {
+          filterID: this.config.userActiveFilter.id,
+          pagination: this.pagination,
+          filters: this.filter.values,
+          zeroFields: this.filter.zeroFields,
+        }
+        sessionStorage.setItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path, JSON.stringify(saved))
       }
     },
     deleteLocalStorageFilter(){
       sessionStorage.removeItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
     },
     copyLocalStorageFilter(){
-      let filter = sessionStorage.getItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
-          if(filter!==null && this.disableFilterPersistent!==true){
-            filter=JSON.parse(filter)
-            this.config.userActiveFilter.id=filter.filterID
-            this.pagination=filter.pagination
-            this.filter.values=filter.filters
-            this.filter.lastValues=filter.filters
-          }
+      const saved = sessionStorage.getItem(Config.get('webserver.app.name')+'_filter_'+this.$route.path)
+      if (saved !== null && !this.disableFilterPersistent) {
+        const filter = JSON.parse(saved)
+        this.config.userActiveFilter.id = filter.filterID
+        this.pagination = filter.pagination
+        this.filter.values = filter.filters || {}
+        this.filter.zeroFields = Array.isArray(filter.zeroFields) ? filter.zeroFields : []
+        this.lastQuickFilter = _.cloneDeep(this.filter)
+      }
+    },
+    toggleZeroFilter(name) {
+      const active = this.filter.zeroFields
+      this.filter.zeroFields = active.includes(name)
+          ? active.filter(field => field !== name)
+          : [...active, name]
+      this.addQuickfilter()
     },
     addQuickfilterWithTimeout(){
       let _this = this
       setTimeout(() => {_this.addQuickfilter()}, 50)
     },
     addQuickfilter() {
-      if (!_.isEqual(this.filter.values, this.filter.lastValues)) {
+      if (!_.isEqual(this.filter, this.lastQuickFilter)) {
+        this.quickFilterRevision++
         // reset pagination
         //this.pagination.itemsPerPage = 10
         this.pagination.page = 1
         this.addLocalStorageFilter()
         this.getData("pagination") //pagination must be reloaded with a filter
-        this.filter.lastValues = JSON.parse(JSON.stringify(this.filter.values));
+        this.lastQuickFilter = _.cloneDeep(this.filter)
       }
     },
     /**
@@ -442,8 +455,11 @@ user:{},
 
 
       this.vuetifyLoading = true; // set vuetify loading indicator
+      const revision = this.quickFilterRevision
+      const requestedQuickFilters = this.quickFilterPath()
       let url = this.backendUrl(withHeader)
       http.get(url).then((resp) => {
+        if (revision !== this.quickFilterRevision) return
         // only set data if config exists. (not dataOnly load)
         if (_.get(resp.data, "config", null) !== null) {
           // export
@@ -470,10 +486,10 @@ user:{},
 
           // filter
           this.config.filter.rowsPerPage, this.pagination.itemsPerPage = _.get(resp.data, "config.filter.rowsPerPage", 10)
-          this.copyLocalStorageFilter()
+          if (!this.headers.length) this.copyLocalStorageFilter()
           this.config.filter.allowedRowsPerPage = _.get(resp.data, "config.filter.allowedRowsPerPage", [5, 10, 15, 25, 50, 100, 500])
           // open filter bar if a filter is set or configured so.
-          if ((url.includes("filter/") || url.includes("filter_")) && this.closedFilter!==true) {
+          if ((url.includes("filter/") || url.includes("filter_") || url.includes("filterZero_")) && this.closedFilter!==true) {
             this.config.filter.openQuickFilter = true;
           } else {
             this.config.filter.openQuickFilter = _.get(resp.data, "config.filter.openQuickFilter", false)
@@ -487,11 +503,6 @@ user:{},
 
 
         //TODO reform:
-
-        // adding total items
-        if (_.get(resp.data, "pagination.Total", false) !== false) {
-          this.itemsTotal = resp.data.pagination.Total;
-        }
 
         if (_.get(resp.data, "config", false) !== false) {
           // user filters
@@ -552,10 +563,12 @@ user:{},
               this.headers[i].sortable = false
             }
 
-            if (("filterable" in this.headers[i])) {
+            if (this.headers[i].filterable) {
               if (typeof this.filter.values[this.headers[i].name] === "undefined") {
                 this.filter.values[this.headers[i].name] = ""
               }
+            } else {
+              delete this.filter.values[this.headers[i].name]
             }
 
             if (("hide" in this.headers[i]) && this.headers[i].hide === true) {
@@ -569,6 +582,20 @@ user:{},
           // TODO better solution
           this.filter.values = JSON.parse(JSON.stringify(this.filter.values));
 
+          if (this.filter.zeroFields.length) {
+            const allowed = this.headers.filter(h => h.filterZeroValue)
+            const previous = this.filter.zeroFields
+            this.filter.zeroFields = previous.filter(name =>
+                !this.config.filter.disable && !this.config.filter.disableQuickFilter &&
+                allowed.some(h => h.name === name))
+            // Drop the inactive input too if the field was removed or disabled since the last visit.
+            previous.filter(name => !this.filter.zeroFields.includes(name))
+                .forEach(name => this.$delete(this.filter.values, name))
+            if (this.filter.zeroFields.length && !this.closedFilter) this.config.filter.openQuickFilter = true
+            this.lastQuickFilter = _.cloneDeep(this.filter)
+            this.addLocalStorageFilter()
+          }
+
           // adding action icons
           if (_.get(resp.data, "config.action.positionLeft", false) !== false) {
             this.headers.unshift({text: "Action", width:1, align: "end", sortable: false, value: "grid_action"})
@@ -576,6 +603,19 @@ user:{},
             this.headers.push({text: "Action", width: 1, sortable: false, value: "grid_action"})
           }
 
+        }
+
+        if (resp.data.head) {
+          const currentQuickFilters = this.quickFilterPath()
+          if (currentQuickFilters && !this.closedFilter) this.config.filter.openQuickFilter = true
+          if (currentQuickFilters !== requestedQuickFilters) {
+            this.getData("pagination")
+            return
+          }
+        }
+
+        if (_.get(resp.data, "pagination.Total", false) !== false) {
+          this.itemsTotal = resp.data.pagination.Total;
         }
 
         // data without decoration
@@ -648,6 +688,7 @@ user:{},
         }
 
       }).catch((error) => {
+        if (revision !== this.quickFilterRevision) return
         this.vuetifyLoading = false; // reset vuetify loading indicator
         this.vuetifyError = true; // set error indicator
         if (_.get(error, "response.data.error", false) !== false) {
@@ -837,9 +878,9 @@ user:{},
             <v-btn
                 v-show="initLoaded&&filterCustomerAllowed&&api.indexOf('/filter/')===-1"
                 small
-                   color="primary"
-                   v-on="on"
-                   :outlined="!config.userActiveFilter.id"
+                color="primary"
+                v-on="on"
+                :outlined="!config.userActiveFilter.id"
             >
               {{ $t('GRID.Filter.Title') }}
             </v-btn>
@@ -866,7 +907,7 @@ user:{},
                           v-model="dialogFilter"
                           @updatefilterlist="updateUserFilterList"
                           @updatefilterlistClose="updatefilterlistClose"
-                          ></UserFilter>
+              ></UserFilter>
             </v-dialog>
             <v-divider></v-divider>
 
@@ -984,21 +1025,27 @@ user:{},
       <template v-if="!config.filter.disable&&!config.filter.disableQuickFilter&&config.filter.openQuickFilter"
                 v-slot:body.prepend="{ headers }">
         <tr>
-          <td class="px-2" style="vertical-align: top;" v-for="header in headers">
-
-            <!-- Normal fields -->
-            <div v-if="!hasSelect(header)&&header.filterable&&header.type!=='Date'&&header.filterable&&header.type!=='DateTime'" >
-              <v-text-field clearable @click:clear="addQuickfilterWithTimeout" @change="addQuickfilter" single-line dense
-                            v-model="filter.values[header.name]"></v-text-field>
-            </div>
-
-            <!-- Select fields -->
-            <div v-if="hasSelect(header)">
-              <v-select :item-text="selectTextTranslation" @change="addQuickfilter" v-model="filter.values[header.name]" dense clearable :items="header.options.select[0].Items" ></v-select>
-            </div>
-
-            <!-- Date fields -->
-           <input-date-time class="ma-2" dense single-line :from-to="true" v-if="header.filterable&&header.type==='Date'||header.filterable&&header.type==='DateTime'" @input="addQuickfilter" :field="header" v-model="filter.values[header.name]"></input-date-time>
+          <td class="px-2" style="vertical-align: top;" v-for="header in headers" :key="header.value">
+            <template v-if="header.filterable">
+              <v-select v-if="hasSelect(header)"
+                        v-model="filter.values[header.name]" :items="header.options.select[0].Items"
+                        :item-text="selectTextTranslation" :disabled="filter.zeroFields.includes(header.name)"
+                        dense hide-details clearable @change="addQuickfilter"></v-select>
+              <input-date-time v-else-if="header.type === 'Date' || header.type === 'DateTime'"
+                               v-model="filter.values[header.name]" :field="header" :from-to="true"
+                               :read-only="filter.zeroFields.includes(header.name)"
+                               class="ma-2" dense single-line @input="addQuickfilter"></input-date-time>
+              <v-text-field v-else v-model="filter.values[header.name]"
+                            :disabled="filter.zeroFields.includes(header.name)"
+                            clearable single-line dense hide-details @change="addQuickfilter"
+                            @click:clear="addQuickfilterWithTimeout"></v-text-field>
+            </template>
+            <v-chip v-if="header.filterZeroValue" tag="button" type="button" small
+                    class="my-1 px-2" :outlined="!filter.zeroFields.includes(header.name)"
+                    :color="filter.zeroFields.includes(header.name) ? 'primary' : undefined"
+                    :aria-pressed="String(filter.zeroFields.includes(header.name))"
+                    :aria-label="$t(header.title) + ' – ' + $t('GRID.Filter.EmptyOnly')"
+                    @click="toggleZeroFilter(header.name)">{{ $t('GRID.Filter.EmptyOnly') }}</v-chip>
           </td>
         </tr>
       </template>
